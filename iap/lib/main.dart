@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -51,6 +52,24 @@ class MyCustomFormState extends State<MyCustomForm> {
     super.dispose();
   }
 
+  Future<String> fetchAlbum() async {
+    final response =
+        await http.get(Uri.https('jsonplaceholder.typicode.com', 'albums/1'));
+    // await http.get(Uri.https('jsonplaceholder.typicode.com', 'albums/1'));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      print(response.body);
+      controllerOutput.text = response.body;
+      return response.body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load data');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -93,6 +112,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: ElevatedButton(
               onPressed: () {
+                fetchAlbum();
                 controllerOutput.text = controllerAddr.text;
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
