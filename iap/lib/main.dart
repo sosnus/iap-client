@@ -54,7 +54,7 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   Future<String> fetchAlbum() async {
     final response =
-        await http.get(Uri.https('jsonplaceholder.typicode.com', 'albums/1'));
+        await http.get(Uri.https(controllerAddr.text, controllerEndpoint.text));
     // await http.get(Uri.https('jsonplaceholder.typicode.com', 'albums/1'));
 
     if (response.statusCode == 200) {
