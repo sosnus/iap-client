@@ -46,7 +46,13 @@ class MyCustomFormState extends State<MyCustomForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
+            decoration: const InputDecoration(
+              icon: Icon(Icons.vpn_lock),
+              hintText: 'Enter backend address here',
+              labelText: 'Backend address',
+            ),
             // The validator receives the text that the user has entered.
+            initialValue: "http://s-vm.northeurope.cloudapp.azure.com:5000",
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter some text';
