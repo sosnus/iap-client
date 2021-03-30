@@ -37,6 +37,18 @@ class MyCustomFormState extends State<MyCustomForm> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
+  final controllerAddr = TextEditingController();
+
+  final controllerEndpoint = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    controllerAddr.dispose();
+    controllerEndpoint.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -46,13 +58,13 @@ class MyCustomFormState extends State<MyCustomForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
+            controller: controllerAddr,
             decoration: const InputDecoration(
               icon: Icon(Icons.vpn_lock),
               hintText: 'Enter backend address here',
               labelText: 'Backend address',
             ),
-            // The validator receives the text that the user has entered.
-            initialValue: "http://s-vm.northeurope.cloudapp.azure.com:5000",
+            // initialValue: "http://s-vm.northeurope.cloudapp.azure.com:5000",
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter some text';
@@ -61,13 +73,13 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
           TextFormField(
+            controller: controllerEndpoint,
             decoration: const InputDecoration(
               icon: Icon(Icons.api),
               hintText: 'Write endpoint addr here, add / at begenning',
               labelText: 'Endpoint',
             ),
-            // The validator receives the text that the user has entered.
-            initialValue: "/hello",
+            // initialValue: "/hello",
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter some text';
@@ -83,8 +95,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                 if (_formKey.currentState!.validate()) {
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('Processing Data')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          'Processing Data for ${controllerAddr.text}${controllerEndpoint.text}')));
                 }
               },
               child: Text('Submit'),
