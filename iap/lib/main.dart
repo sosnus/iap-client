@@ -5,7 +5,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Form Validation Demo';
+    final appTitle = 'IAP App';
 
     return MaterialApp(
       title: appTitle,
@@ -40,6 +40,8 @@ class MyCustomFormState extends State<MyCustomForm> {
   final controllerAddr = TextEditingController();
 
   final controllerEndpoint = TextEditingController();
+  // final controllerAddrAndEndpoint = TextEditingController();
+  final controllerOutput = TextEditingController();
 
   @override
   void dispose() {
@@ -91,6 +93,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: ElevatedButton(
               onPressed: () {
+                controllerOutput.text = controllerAddr.text;
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
                   // If the form is valid, display a snackbar. In the real world,
@@ -102,6 +105,17 @@ class MyCustomFormState extends State<MyCustomForm> {
               },
               child: Text('Submit'),
             ),
+          ),
+          TextField(
+            // enabled: false,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            controller: controllerOutput,
+            decoration: const InputDecoration(
+              hintText: 'Respond from server',
+              labelText: 'Output',
+            ),
+            // initialValue: "/hello",
           ),
         ],
       ),
