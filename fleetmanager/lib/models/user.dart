@@ -1,5 +1,5 @@
 class User {
-  String id;
+  int id;
   String pesel;
   String firstName;
   String sureName;
