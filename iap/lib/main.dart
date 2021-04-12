@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'dart:async';
+import 'dart:convert';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -38,9 +41,10 @@ class MyCustomFormState extends State<MyCustomForm> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
-  final controllerAddr = TextEditingController();
+  final controllerAddr = TextEditingController(
+      text: "http://s-vm.northeurope.cloudapp.azure.com:8081");
 
-  final controllerEndpoint = TextEditingController();
+  final controllerEndpoint = TextEditingController(text: "/user/3");
   // final controllerAddrAndEndpoint = TextEditingController();
   final controllerOutput = TextEditingController();
 
@@ -54,7 +58,7 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   Future<String> fetchAlbum() async {
     final response =
-        await http.get(Uri.https(controllerAddr.text, controllerEndpoint.text));
+        await http.get(Uri.http(controllerAddr.text, controllerEndpoint.text));
     // await http.get(Uri.https('jsonplaceholder.typicode.com', 'albums/1'));
 
     if (response.statusCode == 200) {
@@ -79,13 +83,14 @@ class MyCustomFormState extends State<MyCustomForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
+            // initialValue: "http://s-vm.northeurope.cloudapp.azure.com:8081",
             controller: controllerAddr,
             decoration: const InputDecoration(
               icon: Icon(Icons.vpn_lock),
               hintText: 'Enter backend address here',
               labelText: 'Backend address',
+              // initialValue: "http://s-vm.northeurope.cloudapp.azure.com:8081/",
             ),
-            // initialValue: "http://s-vm.northeurope.cloudapp.azure.com:5000",
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter some text';
@@ -112,8 +117,8 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: ElevatedButton(
               onPressed: () {
+                controllerOutput.text = "wait...";
                 fetchAlbum();
-                controllerOutput.text = controllerAddr.text;
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
                   // If the form is valid, display a snackbar. In the real world,
