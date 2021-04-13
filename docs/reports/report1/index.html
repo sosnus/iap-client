@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Fleet management system</title>
+        <style>
+</style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        <script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="fleet-management-system">Fleet management system</h1>
+<table>
+<thead>
+<tr>
+<th>ℹ️</th>
+<th>This documentation is available online here: <a href="https://sosnus.github.io/iap-client/">https://sosnus.github.io/iap-client/</a></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<h2 id="team">Team</h2>
+<ul>
+<li>Monika Rosa</li>
+<li>Godfrey Mghase</li>
+<li>Stanisław Puławski</li>
+<li>Wiktor Muraszko</li>
+</ul>
+<h2 id="description">Description</h2>
+<p>The main objective of this project is to create a IT System for managing car fleet for the company, which consists of a headquarter and few branch offices located in different cities (Lodz, Warsaw, Cracow). Our solution connects the information systems of company's headquarters and its branches and allows enterprise to manage their car fleet. We have prepared working Web Service and Flutter Android client.</p>
+<h3 id="repositories"><strong>Repositories</strong></h3>
+<p>Backend repository: <a href="https://github.com/Wredter/IAP_project_1">https://github.com/Wredter/IAP_project_1</a></p>
+<p>Frontend, documentation and scripts: <a href="https://github.com/sosnus/iap-client">https://github.com/sosnus/iap-client</a></p>
+<h2 id="technology-stack">Technology stack</h2>
+<ul>
+<li>Database
+<ul>
+<li>MySQL <code>MySQL Server 8.0.23-1debian10</code></li>
+</ul>
+</li>
+<li>Backend
+<ul>
+<li>Java Spring <code>Spring Boot (v2.4.3)</code></li>
+</ul>
+</li>
+<li>Frontend
+<ul>
+<li>Flutter <code>Flutter 2.0.3</code>
+<ul>
+<li>Android <img src="https://img.shields.io/badge/Android-yes-green" alt="Flutter Android"></li>
+<li>Web <img src="https://img.shields.io/badge/Web-not%20yet-red" alt="Flutter Web"></li>
+<li>Web container <img src="https://img.shields.io/badge/Web%20container-not%20yet-red" alt="Flutter Web container"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="report-1---feasibility-study-of-communication-between-systems">Report 1 - Feasibility study of communication between systems</h1>
+<table>
+<thead>
+<tr>
+<th>ℹ️</th>
+<th>the purpose of the first report is presentation connection between database, backend and frontend applications</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<p>First, test deploy consist of 3 parts:</p>
+<ul>
+<li>MySQL database</li>
+<li>Spring boot backend service</li>
+<li>Flutter Android client</li>
+</ul>
+<p>For communication test purpouse, database and backend was deployed on docker containers, on the same Virtual Machine. VM size: Standard B1ms 1vCPU, 2GB RAM</p>
+<ul>
+<li>Backend addr: <a href="http://s-vm.northeurope.cloudapp.azure.com:8081/">http://s-vm.northeurope.cloudapp.azure.com:8081/</a></li>
+<li>Database addr: <a href="http://s-vm.northeurope.cloudapp.azure.com:3306/">http://s-vm.northeurope.cloudapp.azure.com:3306/</a></li>
+</ul>
+<p>Before container deployment, it is necessary to enable new firewall rules:</p>
+<pre><code class="language-bash"><div>ufw allow 22
+ufw allow 3306
+ufw allow 8081
+ufw reload
+</div></code></pre>
+<h2 id="database---deploy-and-test">Database - deploy and test</h2>
+<p>For database deployment, we use simple bash script to run new docker container from Docker Hub</p>
+<pre><code class="language-bash"><div>
+docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql
+
+</div></code></pre>
+<p>We create first sql schema for this project using <a href="http://dbdiagram.io">dbdiagram.io</a> tool. Probably we will have some changes here in the future. Online documentation for our schema is here: <a href="https://dbdiagram.io/d/6053d308ecb54e10c33c2951">https://dbdiagram.io/d/6053d308ecb54e10c33c2951</a></p>
+<p><img src="file:////Users/stanislawpulawski/data/github/sosnus/iap-client/docs/img/db-schema.png" alt="DBeaver"></p>
+<p>Next we create new database users to enable easy synchronous access for the rest of the team members. It is important for future deployments, we need independent user for every backend instance. Here is how we created the users.</p>
+<pre><code class="language-sql"><div><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">&#x27;moderator1&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span> <span class="hljs-keyword">IDENTIFIED</span> <span class="hljs-keyword">BY</span> <span class="hljs-string">&#x27;1234&#x27;</span>;
+<span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">ALL</span> <span class="hljs-keyword">PRIVILEGES</span> <span class="hljs-keyword">ON</span> * . * <span class="hljs-keyword">TO</span> <span class="hljs-string">&#x27;moderator1&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span>;
+<span class="hljs-keyword">FLUSH</span> <span class="hljs-keyword">PRIVILEGES</span>;
+
+</div></code></pre>
+<p>Next we add dump data for testing using the script below.</p>
+<pre><code class="language-sql"><div><span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> <span class="hljs-string">`users`</span> (<span class="hljs-string">`id`</span>, <span class="hljs-string">`first_name`</span>, <span class="hljs-string">`middle_name`</span>, <span class="hljs-string">`surname`</span>, <span class="hljs-string">`pesel`</span>, <span class="hljs-string">`gender`</span>, <span class="hljs-string">`birth_date`</span>, <span class="hljs-string">`role`</span>, <span class="hljs-string">`office_id`</span>) <span class="hljs-keyword">VALUES</span>
+
+(<span class="hljs-number">1020</span>, <span class="hljs-string">&#x27;Ruth&#x27;</span>, <span class="hljs-string">&#x27;Elion&#x27;</span>, <span class="hljs-string">&#x27;Musk&#x27;</span>, <span class="hljs-number">19021989</span>, <span class="hljs-string">&#x27;M&#x27;</span>, <span class="hljs-string">&#x27;2020-10-20&#x27;</span>, <span class="hljs-string">&#x27;admin&#x27;</span>, <span class="hljs-string">&#x27;23&#x27;</span>),
+(<span class="hljs-number">1021</span>, <span class="hljs-string">&#x27;Monika&#x27;</span>, <span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-string">&#x27;Rosa&#x27;</span>, <span class="hljs-number">19021989</span>, <span class="hljs-string">&#x27;F&#x27;</span>, <span class="hljs-string">&#x27;1997-04-20&#x27;</span>, <span class="hljs-string">&#x27;client&#x27;</span>, <span class="hljs-string">&#x27;24&#x27;</span>),
+(<span class="hljs-number">1023</span>, <span class="hljs-string">&#x27;Stanley&#x27;</span>, <span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-string">&#x27;Murashko&#x27;</span>, <span class="hljs-number">1902198</span>, <span class="hljs-string">&#x27;M&#x27;</span>, <span class="hljs-string">&#x27;1999-08-09&#x27;</span>, <span class="hljs-string">&#x27;client&#x27;</span>, <span class="hljs-string">&#x27;23&#x27;</span>),
+(<span class="hljs-number">1024</span>, <span class="hljs-string">&#x27;Godfrey&#x27;</span>, <span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-string">&#x27;Muga&#x27;</span>, <span class="hljs-number">1902198</span>, <span class="hljs-string">&#x27;M&#x27;</span>, <span class="hljs-string">&#x27;1999-08-10&#x27;</span>, <span class="hljs-string">&#x27;admin&#x27;</span>, <span class="hljs-string">&#x27;24&#x27;</span>);
+
+<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> <span class="hljs-string">`cars`</span> (<span class="hljs-string">`worker_id`</span>, <span class="hljs-string">`plate_number`</span>, <span class="hljs-string">`license_number`</span>, <span class="hljs-string">`model`</span>) <span class="hljs-keyword">VALUES</span>
+(<span class="hljs-number">1020</span>, <span class="hljs-string">&#x27;1520&#x27;</span>, <span class="hljs-string">&#x27;5060&#x27;</span>, <span class="hljs-string">&#x27;Toyota&#x27;</span>),
+(<span class="hljs-number">1021</span>, <span class="hljs-string">&#x27;1521&#x27;</span>, <span class="hljs-string">&#x27;5061&#x27;</span>, <span class="hljs-string">&#x27;Nissan&#x27;</span>),
+(<span class="hljs-number">1023</span>, <span class="hljs-string">&#x27;1522&#x27;</span>, <span class="hljs-string">&#x27;5062&#x27;</span>, <span class="hljs-string">&#x27;Hundai&#x27;</span>),
+(<span class="hljs-number">1024</span>, <span class="hljs-string">&#x27;1523&#x27;</span>, <span class="hljs-string">&#x27;5063&#x27;</span>, <span class="hljs-string">&#x27;Toyota&#x27;</span>);
+
+<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> <span class="hljs-string">`offices`</span> (<span class="hljs-string">`id`</span>, <span class="hljs-string">`city`</span>, <span class="hljs-string">`type`</span>) <span class="hljs-keyword">VALUES</span>
+(<span class="hljs-number">23</span>, <span class="hljs-string">&#x27;Lodz&#x27;</span>, <span class="hljs-string">&#x27;HQ&#x27;</span>),
+(<span class="hljs-number">24</span>, <span class="hljs-string">&#x27;Warsaw&#x27;</span>, <span class="hljs-string">&#x27;BO&#x27;</span>);
+
+</div></code></pre>
+<p>We test Our database deployment using DBeaver desktop app:
+<img src="file:////Users/stanislawpulawski/data/github/sosnus/iap-client/docs/img/db-screen2.png" alt="DBeaver"></p>
+<h2 id="backend---deploy-and-test">Backend - deploy and test</h2>
+<p>To deploy backend application, we need build container from source code and run it, using commands below:</p>
+<pre><code class="language-bash"><div>git <span class="hljs-built_in">clone</span> https://github.com/Wredter/IAP_project_1
+<span class="hljs-built_in">cd</span> ./IAP_project_1
+docker stop iap-back-container -t 1
+docker rm iap-back-container
+docker build --no-cache -t iap-back .
+docker run -d -p 8081:80 --name=iap-back-container iap-back
+</div></code></pre>
+<p>Now we can test backend project, by send http get request on <code>/hello</code> endpoint. In Our case, we can see it on addr: <code>http://s-vm.northeurope.cloudapp.azure.com:8081/hello</code>
+<img src="file:////Users/stanislawpulawski/data/github/sosnus/iap-client/docs/img/back-hello.png" alt="back-hello"></p>
+<p>On endpoint <code>/users</code> we can see list of <code>elements</code> from <code>users</code> collections
+<img src="file:////Users/stanislawpulawski/data/github/sosnus/iap-client/docs/img/back-users-json.png" alt="back-users-json"></p>
+<h2 id="frontend---test">Frontend - test</h2>
+<p>For first project iteration, we need implement a few features in frontend application:</p>
+<ul>
+<li>Connection to API</li>
+<li>Users model</li>
+<li>User list view</li>
+</ul>
+<h3 id="connection-to-api">Connection to API</h3>
+<p>Class <code>FleetService</code> contains access to backend API using <code>package:http/http.dart</code> library</p>
+<h3 id="users">Users</h3>
+<p>User class is very simple, and help us to present data from Users collection from backend. We add it for test purpose, in next iteration this class will be modified, and contain expanded constructors and other methods</p>
+<pre><code class="language-dart"><div><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">User</span> </span>{
+  <span class="hljs-built_in">int</span> id;
+  <span class="hljs-built_in">String</span> pesel;
+  <span class="hljs-built_in">String</span> firstName;
+  <span class="hljs-built_in">String</span> sureName;
+
+  User({<span class="hljs-keyword">this</span>.id, <span class="hljs-keyword">this</span>.pesel, <span class="hljs-keyword">this</span>.firstName, <span class="hljs-keyword">this</span>.sureName});
+}
+</div></code></pre>
+<h3 id="user-list-view">User list view</h3>
+<p>Main part of view in this project is builder, which can dynamic add new elements to ListView collection</p>
+<pre><code class="language-dart"><div>Builder(
+        builder: (_) {
+          <span class="hljs-keyword">if</span> (_isLoading) {
+            <span class="hljs-keyword">return</span> Center(child: CircularProgressIndicator());
+          }
+
+          <span class="hljs-keyword">if</span> (_apiResponse.error) {
+            <span class="hljs-keyword">return</span> Center(child: Text(_apiResponse.errorMessage));
+          }
+
+          <span class="hljs-keyword">return</span> ListView.separated(
+            separatorBuilder: (_, __) =&gt;
+                Divider(height: <span class="hljs-number">1</span>, color: Colors.green),
+            itemBuilder: (_, index) {
+              <span class="hljs-keyword">return</span> Dismissible(
+                key: ValueKey(_apiResponse.data[index].id),
+                direction: DismissDirection.startToEnd,
+                onDismissed: (direction) {},
+                confirmDismiss: (direction) <span class="hljs-keyword">async</span> {
+                  <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> showDialog(
+                      context: context, builder: (_) =&gt; UserDelete());
+                  <span class="hljs-built_in">print</span>(result);
+                  <span class="hljs-keyword">return</span> result;
+                },
+                background: Container(
+                  color: Colors.red,
+                  padding: EdgeInsets.only(left: <span class="hljs-number">16</span>),
+                  child: Align(
+                    child: Icon(Icons.delete, color: Colors.white),
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+                child: ListTile(
+                    title: Text(
+                      _apiResponse.data[index].sureName,
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ),
+                    subtitle: Text(<span class="hljs-string">&#x27;PESEL: <span class="hljs-subst">${_apiResponse.data[index].pesel}</span>&#x27;</span>),
+                    onTap: () {}),
+              );
+            },
+            itemCount: _apiResponse.data.length,
+          );
+        },
+      ),
+</div></code></pre>
+<p>Application get list of users using service <code>fleet_service</code>, convert it into list of <code>User</code> objects, and present it as <code>ListTile</code> widgets:
+<img src="file:////Users/stanislawpulawski/data/github/sosnus/iap-client/docs/img/front-users-view.png" alt="front-users-view"></p>
+<h2 id="references-and-sources-for-1st-report">references and sources for 1st report</h2>
+<ul>
+<li>REST API in flutter: <a href="https://www.youtube.com/watch?v=M8zM48Jytv0">https://www.youtube.com/watch?v=M8zM48Jytv0</a></li>
+<li>Flutter documentation: <a href="https://flutter.dev/docs">https://flutter.dev/docs</a></li>
+<li>Create database users: <a href="https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql">https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql</a></li>
+</ul>
+<h1 id="report-2---establish-the-business-context-sketch-the-system-architecture-select-technology">Report 2 - Establish the business context, sketch the system architecture, select technology</h1>
+
+    </body>
+    </html>
