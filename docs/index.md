@@ -72,3 +72,11 @@ docker run -d -p 80:8081 --name=iap-back-container iap-back
 
 Now we can test backend project, by sendd http get request on `/hello` endpoint. In Our case, we can see it on addr: `http://s-vm.northeurope.cloudapp.azure.com:8081/hello`
 ![DBeaver](./img/back-hello.png)
+
+On endpoint `/users` we can see list of `elements` from table `users`
+![DBeaver](./img/back-users-json.png)
+
+
+## Frontend - test
+
+![DBeaver](./img/front-users-view.png)
