@@ -41,6 +41,7 @@ class _UserListState extends State<UserList> {
         appBar: AppBar(title: Text('List of users')),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
+            _fetchUsers();
             // Navigator.of(context)
             // .push(MaterialPageRoute(builder: (_) => NoteModify()));
           },
