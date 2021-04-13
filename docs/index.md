@@ -1,6 +1,8 @@
 # Fleet management system
 
-This documentation is available online here: https://sosnus.github.io/iap-client/ 
+| ℹ️  |  This documentation is available online here: https://sosnus.github.io/iap-client/ |
+| --- | --- |
+
 ## Team
 
 * Monika Rosa
@@ -31,6 +33,10 @@ Frontend, documentation and scripts: https://github.com/sosnus/iap-client
 
 
 # Report 1 - Feasibility study of communication between systems
+
+| ℹ️  |  the purpose of the first report is presentation connection between database, backend and frontend applications |
+| --- | --- |
+
 
 First, test deploy consist of 3 parts:
 * MySQL database
