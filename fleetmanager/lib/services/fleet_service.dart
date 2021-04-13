@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:fleetmanager/models/user.dart';
 import 'package:http/http.dart' as http;
-// import 'package:./models/api_response.dart';
 import 'package:fleetmanager/models/api_response.dart';
 
 class FleetService {
@@ -11,7 +9,9 @@ class FleetService {
   Future<APIResponse<List<User>>> getUserList() {
     return http.get(addr + '/users').then((data) {
       if (data.statusCode == 200) {
-        final jsonData = json.decode(data.body);
+        final jsonData = json.decode(
+            utf8.decode(data.bodyBytes)); //accept special characters like ęąźść
+        //json.decode(data.body);
         final notes = <User>[];
         for (var item in jsonData) {
           final note = User(
