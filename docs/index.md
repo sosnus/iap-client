@@ -2,7 +2,6 @@
 
 This documentation is available online here: https://sosnus.github.io/iap-client/ 
 ## Team
-
 * Monika Rosa
 * Godfrey Mghase
 * Stanisław Puławski
