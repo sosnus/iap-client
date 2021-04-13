@@ -10,6 +10,9 @@
 .history
 .svn/
 
+#macof finder cache
+.DS_Store
+
 # IntelliJ related
 *.iml
 *.ipr
