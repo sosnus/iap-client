@@ -11,7 +11,7 @@ This documentation is available online here: https://sosnus.github.io/iap-client
 ## Description
 The main objective of this project is to create a IT System for managing car fleet for the company, which consists of a headquarter and few branch offices located in different cities (Lodz, Warsaw, Cracow). Our solution connects the information systems of company's headquarters and its branches and allows enterprise to manage their car fleet. We have prepared working Web Service and Flutter Android client.
 
-### Repositories
+### **Repositories**
 Backend repository: https://github.com/Wredter/IAP_project_1
 
 Frontend, documentation and scripts: https://github.com/sosnus/iap-client
@@ -37,9 +37,10 @@ First, test deploy consist of 3 parts:
 * Spring boot backend service
 * Flutter Android client
 
-For communication test purpouse, database and backend was deployed on docker containers, on the same Virtual Machine.
+For communication test purpouse, database and backend was deployed on docker containers, on the same Virtual Machine. VM size: Standard B1ms 1vCPU, 2GB RAM
 * Backend addr: http://s-vm.northeurope.cloudapp.azure.com:8081/
 * Database addr: http://s-vm.northeurope.cloudapp.azure.com:3306/
+
 
 Before container deployment, it is necessary to enable new firewall rules:
 ```bash
@@ -65,7 +66,7 @@ We create first sql schema for this project using dbdiagram.io tool. Probably we
 
  
 
-Next we create new database users to enable easy synchronous access for the rest of the team members. Here is how we created the users.
+Next we create new database users to enable easy synchronous access for the rest of the team members. It is important for future deployments, we need independent user for every backend instance. Here is how we created the users.
 
 ```sql
 CREATE USER 'moderator1'@'%' IDENTIFIED BY '1234';
@@ -97,7 +98,7 @@ INSERT INTO `offices` (`id`, `city`, `type`) VALUES
 ```
 
 We test Our database deployment using DBeaver desktop app:
-![DBeaver](./img/db-screen.png)
+![DBeaver](./img/db-screen2.png)
 
 
 ## Backend - deploy and test
@@ -108,14 +109,14 @@ git clone https://github.com/Wredter/IAP_project_1
 cd ./IAP_project_1
 docker stop iap-back-container -t 1
 docker rm iap-back-container
-docker build --no-cache -t iap-back-container --build-arg .
-docker run -d -p 80:8081 --name=iap-back-container iap-back
+docker build --no-cache -t iap-back .
+docker run -d -p 8081:80 --name=iap-back-container iap-back
 ```
 
 Now we can test backend project, by send http get request on `/hello` endpoint. In Our case, we can see it on addr: `http://s-vm.northeurope.cloudapp.azure.com:8081/hello`
 ![back-hello](./img/back-hello.png)
 
-On endpoint `/users` we can see list of `elements` from table `users`
+On endpoint `/users` we can see list of `elements` from `users` collections
 ![back-users-json](./img/back-users-json.png)
 
 
@@ -125,9 +126,72 @@ For first project iteration, we need implement a few features in frontend applic
 * Users model
 * User list view
 
-### Users 
-TODO$$$$$$$
 
+### Connection to API
+Class `FleetService` contains access to backend API using `package:http/http.dart` library
+### Users 
+User class is very simple, and help us to present data from Users collection from backend. We add it for test purpose, in next iteration this class will be modified, and contain expanded constructors and other methods
+```dart
+class User {
+  int id;
+  String pesel;
+  String firstName;
+  String sureName;
+
+  User({this.id, this.pesel, this.firstName, this.sureName});
+}
+```
+
+### User list view
+Main part of view in this project is builder, which can dynamic add new elements to ListView collection
+```dart
+Builder(
+        builder: (_) {
+          if (_isLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (_apiResponse.error) {
+            return Center(child: Text(_apiResponse.errorMessage));
+          }
+
+          return ListView.separated(
+            separatorBuilder: (_, __) =>
+                Divider(height: 1, color: Colors.green),
+            itemBuilder: (_, index) {
+              return Dismissible(
+                key: ValueKey(_apiResponse.data[index].id),
+                direction: DismissDirection.startToEnd,
+                onDismissed: (direction) {},
+                confirmDismiss: (direction) async {
+                  final result = await showDialog(
+                      context: context, builder: (_) => UserDelete());
+                  print(result);
+                  return result;
+                },
+                background: Container(
+                  color: Colors.red,
+                  padding: EdgeInsets.only(left: 16),
+                  child: Align(
+                    child: Icon(Icons.delete, color: Colors.white),
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+                child: ListTile(
+                    title: Text(
+                      _apiResponse.data[index].sureName,
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ),
+                    subtitle: Text('PESEL: ${_apiResponse.data[index].pesel}'),
+                    onTap: () {}),
+              );
+            },
+            itemCount: _apiResponse.data.length,
+          );
+        },
+      ),
+```
+Application get list of users using service `fleet_service`, convert it into list of `User` objects, and present it as `ListTile` widgets:
 ![front-users-view](./img/front-users-view.png)
 
 ## references and sources for 1st report

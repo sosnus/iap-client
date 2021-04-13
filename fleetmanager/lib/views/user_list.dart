@@ -38,65 +38,60 @@ class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('List of users')),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _fetchUsers();
-            // Navigator.of(context)
-            // .push(MaterialPageRoute(builder: (_) => NoteModify()));
-          },
-          child: Icon(Icons.add),
-        ),
-        body: Builder(
-          builder: (_) {
-            if (_isLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
+      appBar: AppBar(title: Text('List of users')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _fetchUsers();
+          // Navigator.of(context)
+          // .push(MaterialPageRoute(builder: (_) => NoteModify()));
+        },
+        child: Icon(Icons.add),
+      ),
+      body: Builder(
+        builder: (_) {
+          if (_isLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-            if (_apiResponse.error) {
-              return Center(child: Text(_apiResponse.errorMessage));
-            }
+          if (_apiResponse.error) {
+            return Center(child: Text(_apiResponse.errorMessage));
+          }
 
-            return ListView.separated(
-              separatorBuilder: (_, __) =>
-                  Divider(height: 1, color: Colors.green),
-              itemBuilder: (_, index) {
-                return Dismissible(
-                  key: ValueKey(_apiResponse.data[index].id),
-                  direction: DismissDirection.startToEnd,
-                  onDismissed: (direction) {},
-                  confirmDismiss: (direction) async {
-                    final result = await showDialog(
-                        context: context, builder: (_) => UserDelete());
-                    print(result);
-                    return result;
-                  },
-                  background: Container(
-                    color: Colors.red,
-                    padding: EdgeInsets.only(left: 16),
-                    child: Align(
-                      child: Icon(Icons.delete, color: Colors.white),
-                      alignment: Alignment.centerLeft,
-                    ),
+          return ListView.separated(
+            separatorBuilder: (_, __) =>
+                Divider(height: 1, color: Colors.green),
+            itemBuilder: (_, index) {
+              return Dismissible(
+                key: ValueKey(_apiResponse.data[index].id),
+                direction: DismissDirection.startToEnd,
+                onDismissed: (direction) {},
+                confirmDismiss: (direction) async {
+                  final result = await showDialog(
+                      context: context, builder: (_) => UserDelete());
+                  print(result);
+                  return result;
+                },
+                background: Container(
+                  color: Colors.red,
+                  padding: EdgeInsets.only(left: 16),
+                  child: Align(
+                    child: Icon(Icons.delete, color: Colors.white),
+                    alignment: Alignment.centerLeft,
                   ),
-                  child: ListTile(
-                      title: Text(
-                        _apiResponse.data[index].sureName,
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      ),
-                      subtitle:
-                          Text('PESEL: ${_apiResponse.data[index].pesel}'),
-                      onTap: () {}
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      // builder: (_) => UserModify(
-                      // noteID: _apiResponse.data[index].id)));
-                      // },
-                      ),
-                );
-              },
-              itemCount: _apiResponse.data.length,
-            );
-          },
-        ));
+                ),
+                child: ListTile(
+                    title: Text(
+                      _apiResponse.data[index].sureName,
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ),
+                    subtitle: Text('PESEL: ${_apiResponse.data[index].pesel}'),
+                    onTap: () {}),
+              );
+            },
+            itemCount: _apiResponse.data.length,
+          );
+        },
+      ),
+    );
   }
 }

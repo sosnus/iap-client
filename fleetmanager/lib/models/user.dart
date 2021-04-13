@@ -5,10 +5,4 @@ class User {
   String sureName;
 
   User({this.id, this.pesel, this.firstName, this.sureName});
-
-  // User(
-  //     {this.id,
-  //     this.noteTitle,
-  //     this.createDateTime,
-  //     this.latestEditDateTime});
 }
