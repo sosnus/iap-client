@@ -211,6 +211,10 @@ Application get list of users using service `fleet_service`, convert it into lis
 * Headquarters Manager - Headquarters Manager represents a system role with the authorization to assign car to the branch office, update HQ car details.
 * Branch Office Manager - Branch Office Manager represents a system role with the authorization to fill out the request form for the car, assign car to a worker, update BO car details.
 
+
+![diagram-1](./img/diagram-1.png)
+![diagram-2](./img/diagram-2.png)
+
 ## Description of use cases 
 ### 1. Fill out the request form (when worker need new car)
 * Type: general 
