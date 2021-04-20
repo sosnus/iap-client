@@ -207,3 +207,42 @@ Application get list of users using service `fleet_service`, convert it into lis
 
 
 # Report 2 - Establish the business context, sketch the system architecture, select technology
+## System actors
+Headquarters Manager - Headquarters Manager represents a system role with the authorization to assign car to the branch office, update HQ car details.
+Branch Office Manager - Branch Office Manager represents a system role with the authorization to fill out the request form for the car, assign car to a worker, update BO car details.
+
+## Description of use cases 
+### 1. Fill out the request form (when worker need new car)
+* Type: general 
+* Users: Branch Office Manager 
+* Initial conditions: Branch Office Manager confirmed their identity via login and password.
+* Typical step sequence:  
+1. Branch Office Manager chooses an option to fill out the request form. 
+2. BO Manager fills out the request form 
+* Alternative sequence of steps:  
+2a. Request form was filled incorrectly, BO Manager repeats filling process. 
+2b. Request form was filled incorrectly, BO Manager displays help video and repeats the process. 
+* Final conditions: the request form has been successfully filled. 
+
+### 2. Assign free car (to people) 
+* Type: general
+* Users: Headquarters Manager 
+* Initial conditions: Headquarters Manager confirmed their identity via login and password. 
+* Typical step sequence:  
+1. The request validation 
+2. HQ Manager assigns free car 
+3. Update HQ car details 
+4. Send car details to BO 
+* Alternative sequence of steps: 
+1a. The request is invalid (error message is sent to BO)  
+2a. There is no free car (notification is sent to BO) 
+* Final conditions: the free car has been assigned to BO 
+
+### 3. Assign car to a worker 
+* Type: general
+* Users: Branch Office Manager 
+* Initial conditions: Branch Office Manager confirmed their identity via login and password. 
+* Typical step sequence:
+1. Branch Office Manager assigns car to the worker. 
+2. BO car details are updated. 
+* Final conditions: car is assigned to worker.
