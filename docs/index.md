@@ -208,8 +208,8 @@ Application get list of users using service `fleet_service`, convert it into lis
 
 # Report 2 - Establish the business context, sketch the system architecture, select technology
 ## System actors
-Headquarters Manager - Headquarters Manager represents a system role with the authorization to assign car to the branch office, update HQ car details.
-Branch Office Manager - Branch Office Manager represents a system role with the authorization to fill out the request form for the car, assign car to a worker, update BO car details.
+* Headquarters Manager - Headquarters Manager represents a system role with the authorization to assign car to the branch office, update HQ car details.
+* Branch Office Manager - Branch Office Manager represents a system role with the authorization to fill out the request form for the car, assign car to a worker, update BO car details.
 
 ## Description of use cases 
 ### 1. Fill out the request form (when worker need new car)
