@@ -1,6 +1,6 @@
 # Fleet management system
 
-| ℹ️  |  This documentation is available online here: https://sosnus.github.io/iap-client/ |
+| ℹ️  |  This documentation is available online [here](https://sosnus.github.io/iap-client/). |
 | --- | --- |
 
 ## Team
@@ -14,9 +14,9 @@
 The main objective of this project is to create a IT System for managing car fleet for the company, which consists of a headquarter and few branch offices located in different cities (Lodz, Warsaw, Cracow). Our solution connects the information systems of company's headquarters and its branches and allows enterprise to manage their car fleet. We have prepared working Web Service and Flutter Android client.
 
 ### **Repositories**
-Backend repository: https://github.com/Wredter/IAP_project_1
+Backend repository [here](https://github.com/Wredter/IAP_project_1).
 
-Frontend, documentation and scripts: https://github.com/sosnus/iap-client
+Frontend, documentation and scripts [here](https://github.com/sosnus/iap-client)
 
 ## Technology stack
 
@@ -44,8 +44,8 @@ First, test deploy consist of 3 parts:
 * Flutter Android client
 
 For communication test purpouse, database and backend was deployed on docker containers, on the same Virtual Machine. VM size: Standard B1ms 1vCPU, 2GB RAM
-* Backend addr: http://s-vm.northeurope.cloudapp.azure.com:8081/
-* Database addr: http://s-vm.northeurope.cloudapp.azure.com:3306/
+* Backend address [here](http://s-vm.northeurope.cloudapp.azure.com:8081/)
+* Database address [here](http://s-vm.northeurope.cloudapp.azure.com:3306/)
 
 
 Before container deployment, it is necessary to enable new firewall rules:
@@ -66,7 +66,7 @@ docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d
 
 ```
 
-We create first sql schema for this project using dbdiagram.io tool. Probably we will have some changes here in the future. Online documentation for our schema is here: https://dbdiagram.io/d/6053d308ecb54e10c33c2951 
+We create first sql schema for this project using dbdiagram.io tool. Probably we will have some changes here in the future. Online documentation for our schema is [here]( https://dbdiagram.io/d/6053d308ecb54e10c33c2951) 
 
 ![DBeaver](./img/db-schema.png)
 
@@ -119,7 +119,7 @@ docker build --no-cache -t iap-back .
 docker run -d -p 8081:80 --name=iap-back-container iap-back
 ```
 
-Now we can test backend project, by send http get request on `/hello` endpoint. In Our case, we can see it on addr: `http://s-vm.northeurope.cloudapp.azure.com:8081/hello`
+Now we can test backend project, by send http get request on `/hello` endpoint. In Our case, we can see it on [address](http://s-vm.northeurope.cloudapp.azure.com:8081/hello)`
 ![back-hello](./img/back-hello.png)
 
 On endpoint `/users` we can see list of `elements` from `users` collections
@@ -201,9 +201,9 @@ Application get list of users using service `fleet_service`, convert it into lis
 ![front-users-view](./img/front-users-view.png)
 
 ## references and sources for 1st report
-* REST API in flutter: https://www.youtube.com/watch?v=M8zM48Jytv0
-* Flutter documentation: https://flutter.dev/docs
-* Create database users: https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
+* [REST API in flutter](https://www.youtube.com/watch?v=M8zM48Jytv0)
+* [Flutter documentation](https://flutter.dev/docs)
+* [Create database users](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql)
 
 
 # Report 2 - Establish the business context, sketch the system architecture, select technology
@@ -255,5 +255,5 @@ Application get list of users using service `fleet_service`, convert it into lis
 * Final conditions: car is assigned to worker.
 
 ## References and sources for 2nd report
-* http://www.agilemodeling.com/artifacts/deploymentDiagram.htm
-* http://www.agilemodeling.com/style/activityDiagram.htm
+* [UML deployment diagram guide](http://www.agilemodeling.com/artifacts/deploymentDiagram.htm)
+* [UML activity diagram](http://www.agilemodeling.com/style/activityDiagram.htm)
