@@ -212,10 +212,10 @@ Application get list of users using service `fleet_service`, convert it into lis
 * Branch Office Manager - Branch Office Manager represents a system role with the authorization to fill out the request form for the car, assign car to a worker, update BO car details.
 
 ## Activity diagram
-![diagram-1](./img/diagram-1.png)
+![diagram-1](./img/diagram-1-v2.png)
 
 ## Deployment diagram
-![diagram-2](./img/diagram-2.png)
+![diagram-2](./img/diagram-2-v2.svg)
 
 ## Description of use cases 
 ### 1. Fill out the request form (when worker needs new car)
@@ -259,7 +259,7 @@ Application get list of users using service `fleet_service`, convert it into lis
 * http://www.agilemodeling.com/style/activityDiagram.htm
 
 
-# Report 3 TEMPORARY
+<!-- # Report 3 TEMPORARY
 
 
 
@@ -268,4 +268,4 @@ Application get list of users using service `fleet_service`, convert it into lis
 | --- | --- |--- |
 | ![view-1](./img/view1.png) | ![view-2](./img/view2.png) | ![view-3](./img/view3.png) |
 | --- | --- |--- |
-
+ -->
