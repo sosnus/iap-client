@@ -1,22 +1,24 @@
 # Fleet management system
 
-| ℹ️  |  This documentation is available online here: https://sosnus.github.io/iap-client/ |
+| ℹ️  |  This documentation is available online [here](https://sosnus.github.io/iap-client/). |
 | --- | --- |
 
 ## Team
 
-* Monika Rosa
-* Godfrey Mghase
-* Stanisław Puławski
-* Wiktor Muraszko
+* Monika Rosa 239113
+* Godfrey Mghase 239195
+* Stanisław Puławski 239111
+* Wiktor Muraszko 239109
 
 ## Description
 The main objective of this project is to create a IT System for managing car fleet for the company, which consists of a headquarter and few branch offices located in different cities (Lodz, Warsaw, Cracow). Our solution connects the information systems of company's headquarters and its branches and allows enterprise to manage their car fleet. We have prepared working Web Service and Flutter Android client.
 
 ### **Repositories**
-Backend repository: https://github.com/Wredter/IAP_project_1
+Backend repository [here](https://github.com/Wredter/IAP_project_1).
 
-Frontend, documentation and scripts: https://github.com/sosnus/iap-client
+Frontend repository [here](https://github.com/sosnus/apiconsument).
+
+Documentation, scripts (and special frontend for 1st repo) [here](https://github.com/sosnus/iap-client)
 
 ## Technology stack
 
@@ -25,9 +27,9 @@ Frontend, documentation and scripts: https://github.com/sosnus/iap-client
 * Backend
     * Java Spring `Spring Boot (v2.4.3)`
 * Frontend
-    * Flutter `Flutter 2.0.3`
+    * Flutter `Flutter 2.2.2`
         * Android ![Flutter Android](https://img.shields.io/badge/Android-yes-green)
-        * Web ![Flutter Web](https://img.shields.io/badge/Web-not%20yet-red)
+        * Web ![Flutter Web](https://img.shields.io/badge/Web-yes-green)
         * Web container ![Flutter Web container](https://img.shields.io/badge/Web%20container-not%20yet-red)
 
 
@@ -44,8 +46,10 @@ First, test deploy consist of 3 parts:
 * Flutter Android client
 
 For communication test purpouse, database and backend was deployed on docker containers, on the same Virtual Machine. VM size: Standard B1ms 1vCPU, 2GB RAM
-* Backend addr: http://s-vm.northeurope.cloudapp.azure.com:8081/
-* Database addr: http://s-vm.northeurope.cloudapp.azure.com:3306/
+* Backend address [here](http://s-vm.northeurope.cloudapp.azure.com:8081/)
+* Database address [here](http://s-vm.northeurope.cloudapp.azure.com:3306/)
+
+# TODO: new backend address
 
 
 Before container deployment, it is necessary to enable new firewall rules:
@@ -66,7 +70,7 @@ docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d
 
 ```
 
-We create first sql schema for this project using dbdiagram.io tool. Probably we will have some changes here in the future. Online documentation for our schema is here: https://dbdiagram.io/d/6053d308ecb54e10c33c2951 
+We create first sql schema for this project using dbdiagram.io tool. Probably we will have some changes here in the future. Online documentation for our schema is [here]( https://dbdiagram.io/d/6053d308ecb54e10c33c2951) 
 
 ![DBeaver](./img/db-schema.png)
 
@@ -119,7 +123,7 @@ docker build --no-cache -t iap-back .
 docker run -d -p 8081:80 --name=iap-back-container iap-back
 ```
 
-Now we can test backend project, by send http get request on `/hello` endpoint. In Our case, we can see it on addr: `http://s-vm.northeurope.cloudapp.azure.com:8081/hello`
+Now we can test backend project, by send http get request on `/hello` endpoint. In Our case, we can see it on [address](http://s-vm.northeurope.cloudapp.azure.com:8081/hello)`
 ![back-hello](./img/back-hello.png)
 
 On endpoint `/users` we can see list of `elements` from `users` collections
@@ -201,9 +205,9 @@ Application get list of users using service `fleet_service`, convert it into lis
 ![front-users-view](./img/front-users-view.png)
 
 ## references and sources for 1st report
-* REST API in flutter: https://www.youtube.com/watch?v=M8zM48Jytv0
-* Flutter documentation: https://flutter.dev/docs
-* Create database users: https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
+* [REST API in flutter](https://www.youtube.com/watch?v=M8zM48Jytv0)
+* [Flutter documentation](https://flutter.dev/docs)
+* [Create database users](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql)
 
 
 # Report 2 - Establish the business context, sketch the system architecture, select technology
@@ -212,10 +216,10 @@ Application get list of users using service `fleet_service`, convert it into lis
 * Branch Office Manager - Branch Office Manager represents a system role with the authorization to fill out the request form for the car, assign car to a worker, update BO car details.
 
 ## Activity diagram
-![diagram-1](./img/diagram-1.png)
+![diagram-1](./img/diagram-1-v2.png)
 
 ## Deployment diagram
-![diagram-2](./img/diagram-2.png)
+![diagram-2](./img/diagram-2-v2.svg)
 
 ## Description of use cases 
 ### 1. Fill out the request form (when worker needs new car)
@@ -255,5 +259,107 @@ Application get list of users using service `fleet_service`, convert it into lis
 * Final conditions: car is assigned to worker.
 
 ## References and sources for 2nd report
+
+* [UML deployment diagram guide](http://www.agilemodeling.com/artifacts/deploymentDiagram.htm)
+* [UML activity diagram](http://www.agilemodeling.com/style/activityDiagram.htm)
+
 * http://www.agilemodeling.com/artifacts/deploymentDiagram.htm
 * http://www.agilemodeling.com/style/activityDiagram.htm
+
+
+
+# Report 3 - Implementation of data exchange and synchronization (headquarters / offices)
+
+
+
+```markdown
+## Report task (description)
+https://ftims.edu.p.lodz.pl/mod/assign/view.php?id=34532
+Report - stage 3
+Determine data models (headquarters / branches),
+Implementation of data exchange and synchronization (headquarters / branches)
+Required elements:
+
+background service (in headquarter and/or branch server) that performs periodic data synchronization
+fault tolerance when connection between HQ and branches is not available (try to synchronize next time)
+Also:
+completion of service layer, and user interface in client applications
+presentation of running applications
+presentation of data exchange or data synchronization between headquarters and branches
+
+TODO:
+* Figma models
+* Backend implementation:
+  * CRUD
+  * Authorisation
+  * Business layer
+  * Unit test
+  * find way to pass run arguments after build (like connection string or sth)
+* Frontend
+  * Login
+  * All views
+  * Unit test
+* Database
+  * DB for every deployment (2x BO, 1x HQ)
+```
+
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+
+
+
+
+| Request form | Request list | Request liew |
+| --- | --- |--- |
+| ![view-1](./img/view1.png) | ![view-2](./img/view2.png) | ![view-3](./img/view3.png) |
+| --- | --- |--- |
+ 
