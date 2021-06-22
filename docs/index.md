@@ -16,7 +16,9 @@ The main objective of this project is to create a IT System for managing car fle
 ### **Repositories**
 Backend repository [here](https://github.com/Wredter/IAP_project_1).
 
-Frontend, documentation and scripts [here](https://github.com/sosnus/iap-client)
+Frontend repository [here](https://github.com/sosnus/apiconsument).
+
+Documentation, scripts (and special frontend for 1st repo) [here](https://github.com/sosnus/iap-client)
 
 ## Technology stack
 
@@ -25,9 +27,9 @@ Frontend, documentation and scripts [here](https://github.com/sosnus/iap-client)
 * Backend
     * Java Spring `Spring Boot (v2.4.3)`
 * Frontend
-    * Flutter `Flutter 2.0.3`
+    * Flutter `Flutter 2.2.2`
         * Android ![Flutter Android](https://img.shields.io/badge/Android-yes-green)
-        * Web ![Flutter Web](https://img.shields.io/badge/Web-not%20yet-red)
+        * Web ![Flutter Web](https://img.shields.io/badge/Web-yes-green)
         * Web container ![Flutter Web container](https://img.shields.io/badge/Web%20container-not%20yet-red)
 
 
@@ -46,6 +48,8 @@ First, test deploy consist of 3 parts:
 For communication test purpouse, database and backend was deployed on docker containers, on the same Virtual Machine. VM size: Standard B1ms 1vCPU, 2GB RAM
 * Backend address [here](http://s-vm.northeurope.cloudapp.azure.com:8081/)
 * Database address [here](http://s-vm.northeurope.cloudapp.azure.com:3306/)
+
+# TODO: new backend address
 
 
 Before container deployment, it is necessary to enable new firewall rules:
