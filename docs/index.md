@@ -50,17 +50,18 @@ Databases containers are hosted on Azure Virtual Machine with a lot of tthers co
 When developer build and push image, webhooks will deploy container at ASP.
 
 ```bash
-sudo docker login sosnuscontainers
+docker login sosnuscontainers.azurecr.io
+# login: ********
 # password: *********
 
-sudo docker build -t sosnuscontainers.azurecr.io/iap-warsaw-hq .
-sudo docker push sosnuscontainers.azurecr.io/iap-warsaw-hq
+docker build -t sosnuscontainers.azurecr.io/iap-warsaw-hq .
+docker push sosnuscontainers.azurecr.io/iap-warsaw-hq
 
-sudo docker build -t sosnuscontainers.azurecr.io/iap-lodz-bo .
-sudo docker push sosnuscontainers.azurecr.io/iap-lodz-bo
+docker build -t sosnuscontainers.azurecr.io/iap-lodz-bo .
+docker push sosnuscontainers.azurecr.io/iap-lodz-bo
 
-sudo docker build -t sosnuscontainers.azurecr.io/iap-cracow-bo .
-sudo docker push sosnuscontainers.azurecr.io/iap-cracow-bo
+docker build -t sosnuscontainers.azurecr.io/iap-cracow-bo .
+docker push sosnuscontainers.azurecr.io/iap-cracow-bo
 
 ```
 # TODO: new backend address
