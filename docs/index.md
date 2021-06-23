@@ -32,6 +32,39 @@ Documentation, scripts (and special frontend for 1st repo) [here](https://github
         * Web ![Flutter Web](https://img.shields.io/badge/Web-yes-green)
         * Web container ![Flutter Web container](https://img.shields.io/badge/Web%20container-not%20yet-red)
 
+### Production deployment
+#### Production deployment links
+
+* [HQ Warsaw office](https://iap-warsaw-hq.azurewebsites.net/)
+* [BO Lodz office](https://iap-lodz-bo.azurewebsites.net/)
+* [BO Cracow office](https://iap-cracow-bo.azurewebsites.net/)
+
+Backend containers are hosted on ASP (App Service Plan) with 28 other applications. ASP based on tier B2 and have: 3.5GB RAM and 2vCPU cores 
+
+Databases containers are hosted on Azure Virtual Machine with a lot of tthers containers and services. VM size: Standard B1ms 1vCPU, 2GB RAM. Containers are separated and are ready to migration.
+
+
+# TODO: new diagram
+![DBeaver](./img/deployment-diagram.png)
+
+When developer build and push image, webhooks will deploy container at ASP.
+
+```bash
+docker login sosnuscontainers.azurecr.io
+# login: ********
+# password: *********
+
+docker build -t sosnuscontainers.azurecr.io/iap-warsaw-hq .
+docker push sosnuscontainers.azurecr.io/iap-warsaw-hq
+
+docker build -t sosnuscontainers.azurecr.io/iap-lodz-bo .
+docker push sosnuscontainers.azurecr.io/iap-lodz-bo
+
+docker build -t sosnuscontainers.azurecr.io/iap-cracow-bo .
+docker push sosnuscontainers.azurecr.io/iap-cracow-bo
+
+```
+# TODO: new backend address
 
 
 # Report 1 - Feasibility study of communication between systems
@@ -45,11 +78,11 @@ First, test deploy consist of 3 parts:
 * Spring boot backend service
 * Flutter Android client
 
+#### test deployment
+
 For communication test purpouse, database and backend was deployed on docker containers, on the same Virtual Machine. VM size: Standard B1ms 1vCPU, 2GB RAM
 * Backend address [here](http://s-vm.northeurope.cloudapp.azure.com:8081/)
 * Database address [here](http://s-vm.northeurope.cloudapp.azure.com:3306/)
-
-# TODO: new backend address
 
 
 Before container deployment, it is necessary to enable new firewall rules:
