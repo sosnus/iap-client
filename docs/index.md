@@ -277,7 +277,8 @@ As of now the data models for headquarters and branch office look pretty similar
 ### HQ Model
 ![hqmodel](./img/hqmodel.JPG)
 Down below we paste a sample code for the HQ office entity as implemented in our application.
-```
+```java
+
 @Entity
 @Table(name = "offices")
 @NoArgsConstructor
@@ -313,7 +314,7 @@ public class Office {
 ### BO Model
 ![bomodel](./img/bomodel.JPG)
 Down below we paste a sample code for the bo users entity as implemented in our application.
-```
+```java
 @Entity
 @Table(name = "users")
 @Builder
@@ -397,7 +398,7 @@ public class User {
 We use [RestTemplate](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html) class under org.springframework.web.client package to manage data exchange, and for synchronization tasks we use [TaskSchedular interfaces](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/scheduling.html) in spring boot just by enabling the scheduling at the main application and use @ annotation for each method/class we need to schedule.
 
 Enabling Scheduling in spring boot main application, @EnableScheduling and @EnableSwagger2 for documentation.
-```
+```java
 package com.IAP.car_exchange;
 
 @RestController
@@ -428,7 +429,7 @@ public class CarExchangeApplication {
 Firstly, assuming the office, role and user have been commissioned already, A user will create a request, this request will be stored in a local branch database and the RestTemplate.postForObject() method will be invoked to transmit this request to headquarter office. Incase any failure, scheduling/synchronization has been enabled in such a way that after every 10 seconds the failed requests will be retransmitted again. Entities like User,Office, and Request have beeen synchronized such that there is a copy of each of them at the HQ server/database.
 
 a. Synchronization properties definition
-```
+```java
 package com.IAP.car_exchange;
 
 public class SynchronizationConfiguration {
@@ -448,7 +449,7 @@ public class SynchronizationConfiguration {
 
 ```
 b. Synchronization service controller
-```
+```java
 @RestController
 public class SyncronizationController {
 	
@@ -501,7 +502,7 @@ public class SyncronizationController {
 ```
 c. Sychronization service implementation for requests as an example.
 
-```
+```java
 @Repository
 @Data
 public class SyncronizationService {
@@ -568,7 +569,7 @@ Here, we transfer and synchnronize all the responses we have ever sent to branch
 
 #### Background services
 a. Sychronization properties definition
-```
+```java
 package com.IAP.car_exchange;
 
 public class SynchronizationConfiguration {
@@ -588,7 +589,7 @@ public class SynchronizationConfiguration {
 
 b. Responses synchronization controller
 
-```
+```java
 @RestController
 public class ResponsesSyncController {
 	@Autowired
@@ -613,7 +614,7 @@ public class ResponsesSyncController {
 ```
 c. Responses synchronization service
 
-```
+```java
 @Repository
 @Data
 public class ResponsesSycService {
@@ -674,7 +675,7 @@ public class ResponsesSycService {
 #### Service layer descriptions
 Here, we explain how we implemented the car request service. We should note that, CRUD operations have also been implemented for all the data models. Follow along the following steps:-
 1. A bo user create a request -- Data access layer
-   ```
+   ```java
    @Data
    public class RequestData {
       Long requestId;
@@ -693,7 +694,7 @@ Here, we explain how we implemented the car request service. We should note that
    ```
    Data access interface - the repository
    
-   ```
+   ```java
    package com.IAP.car_exchange.repository;
 
    import java.util.List;
@@ -718,7 +719,7 @@ Here, we explain how we implemented the car request service. We should note that
 
    A request controller
    
-   ```
+   ```java
    @RestController
    public class RequestController {
       @Autowired
@@ -764,7 +765,7 @@ Here, we explain how we implemented the car request service. We should note that
    
    A request service method for adding a request only
    
-   ```
+   ```java
       public Request addRequest(Long requestorId,Long branchId,String carModel,
     		String vehiclePreffered,Date requestDate) {
         User user = userRepository.findById(requestorId)
@@ -787,7 +788,7 @@ Here, we explain how we implemented the car request service. We should note that
    If successfully, the requests is transfered to the hq for further processes.
    
 3. The hq manager will manage the requests, via the AssignCarController service
-   ```
+   ```java
    @RestController
    public class AssignCarController {
 
