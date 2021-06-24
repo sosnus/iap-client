@@ -301,7 +301,551 @@ Application get list of users using service `fleet_service`, convert it into lis
 
 
 
-# Report 3 - Implementation of data exchange and synchronization (headquarters / offices)
+# Report 3 - Implementation of data exchange and synchronization (headquarters(HQ) / offices(BO))
+Just an update, this is the HQ and BO setup.
+![hq_bo_setup](./img/back_setup.png)
+
+## Data Models
+As of now the data models for headquarters and branch office look pretty similar except for the responses model which takes care of all the responses the hq have ever sent to the branch office and some columns entries at branch office model are meant for data synchronization purposes.
+### HQ Model
+![hqmodel](./img/hqmodel.JPG)
+Down below we paste a sample code for the HQ office entity as implemented in our application.
+```
+@Entity
+@Table(name = "offices")
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class Office {
+    @Getter
+    @Setter
+    @Id
+    @NotNull
+    @Column(name = "id")
+    public long id;
+     
+    @Getter
+    @Setter
+    @Column(name = "city")
+    public String city;
+
+    @Getter
+    @Setter
+    @Column(name = "type")
+    public String type;
+    
+    @Getter
+    @Setter
+    @Column(name = "address")
+    public String address;
+}
+
+```
+
+### BO Model
+![bomodel](./img/bomodel.JPG)
+Down below we paste a sample code for the bo users entity as implemented in our application.
+```
+@Entity
+@Table(name = "users")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class User {
+    @Getter
+    @Setter
+    @Id
+    @NotNull
+    @Min(40000)
+    @Max(60000)
+    private long id;
+    
+
+    @Getter
+    @Setter
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Getter
+    @Setter
+    @Column(name = "middle_name")
+    private String middleName;
+
+    @Getter
+    @Setter
+    @Column(name = "surname")
+    private String surname;
+
+    @Getter
+    @Setter
+    @Size(min = 10, max = 12)
+    @Column(name = "pesel")
+    private String pesel;
+
+    @Getter
+    @Setter
+    @Column(name = "gender")
+    private char gender;
+
+    @Getter
+    @Setter
+    @Temporal(TemporalType.DATE)
+    @Column(name = "birth_date")
+    private Date birthDate;
+
+
+    
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "office_id", nullable = false, referencedColumnName = "id")
+    private Office officeId;
+    
+    @Getter
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "role_id", nullable = false, referencedColumnName = "id")
+    private Role roleId;
+    
+    @Getter
+    @Setter
+    @Column(name = "sync")
+    private Boolean sync;
+    
+
+    public User(String firstName, String middleName, String surname, String pesel, char gender, Date birthDate,Role roleId,Office officeId){
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.surname = surname;
+        this.pesel = pesel;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.roleId = roleId;
+        this.officeId = officeId;
+    }
+}
+
+```
+## Implementation of data exchange and synchronization
+We use [RestTemplate](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html) class under org.springframework.web.client package to manage data exchange, and for synchronization tasks we use [TaskSchedular interfaces](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/scheduling.html) in spring boot just by enabling the scheduling at the main application and use @ annotation for each method/class we need to schedule.
+
+Enabling Scheduling in spring boot main application, @EnableScheduling and @EnableSwagger2 for documentation.
+```
+package com.IAP.car_exchange;
+
+@RestController
+@SpringBootApplication
+@EnableScheduling
+@EnableSwagger2
+public class CarExchangeApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(CarExchangeApplication.class, args);
+	}
+	
+	public Docket productApi() {
+		return new Docket(DocumentationType.SWAGGER_2).select()
+		    .apis(RequestHandlerSelectors.basePackage("com.IAP.car_exchange")).build();
+		   }
+
+	@GetMapping("/hello")
+	public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
+		return String.format("Hello %s!", name);
+	}
+
+}
+
+```
+
+### Data exchange and synchronization for branch office
+Firstly, assuming the office, role and user have been commissioned already, A user will create a request, this request will be stored in a local branch database and the RestTemplate.postForObject() method will be invoked to transmit this request to headquarter office. Incase any failure, scheduling/synchronization has been enabled in such a way that after every 10 seconds the failed requests will be retransmitted again. Entities like User,Office, and Request have beeen synchronized such that there is a copy of each of them at the HQ server/database.
+
+a. Synchronization properties definition
+```
+package com.IAP.car_exchange;
+
+public class SynchronizationConfiguration {
+	
+	// connection to HQ
+	public static final String uriToHq = "http://s-vm.northeurope.cloudapp.azure.com:8081/request";
+	public static final String uriToHqUser = "http://s-vm.northeurope.cloudapp.azure.com:8081/user";
+	public static final String uriToHqOffice = "http://s-vm.northeurope.cloudapp.azure.com:8081/office";
+
+	// connection from HQ
+	public static final String  uriFromHq = "details";
+	
+	// delay sync timer in millisecond
+	public static final int delay = 10000;
+
+}
+
+```
+b. Synchronization service controller
+```
+@RestController
+public class SyncronizationController {
+	
+	
+	@Autowired
+	SyncronizationService syncronizationService;
+	@Autowired
+	SynchronizeUserService synchronizeUserService;
+	@Autowired
+	SynchronizeOfficeService synchronizeOfficeService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(SyncronizationController.class);
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+	
+	@Scheduled(fixedDelay=SynchronizationConfiguration.delay)
+	public void synchronizeRequests() {
+		logger.info("Scheduled Synchronization Task for requests :: Execution Time - {}",dateFormat.format(LocalDateTime.now()));
+		try {
+			ResponseEntity<String> sync = syncronizationService.tryToSync();
+		} catch(Exception ex) {
+			logger.error("We have run into an error: we will reconnect shortly");
+		}
+	}
+	
+	@Scheduled(fixedDelay=SynchronizationConfiguration.delay)
+	public @ResponseBody void synchronizeUsers() {
+		logger.info("Scheduled Synchronization Task for users :: Execution Time - {}",dateFormat.format(LocalDateTime.now()));
+		
+		  try { ResponseEntity<String> sync = synchronizeUserService.syncUsers(); }
+		  catch(Exception ex) {
+		  logger.error("We have run into an error: we will reconnect shortly"); 
+		  throw ex; 
+		  }		
+	}
+	
+	@Scheduled(fixedDelay=SynchronizationConfiguration.delay)
+	public @ResponseBody void synchronizeOffices() {
+		logger.info("Scheduled Synchronization Task for Offices :: Execution Time - {}",dateFormat.format(LocalDateTime.now()));
+		
+		  try { ResponseEntity<String> sync = synchronizeOfficeService.syncOffices(); }
+		  catch(Exception ex) {
+		  logger.error("We have run into an error: we will reconnect shortly"); 
+		  throw ex; 
+		  }		
+	}
+
+}
+
+```
+c. Sychronization service implementation for requests as an example.
+
+```
+@Repository
+@Data
+public class SyncronizationService {
+	final RequestRepository requestRepository;
+	
+	RequestData requestData = new RequestData();
+	
+	  public SyncronizationService(RequestRepository requestRepository) {
+	  this.requestRepository = requestRepository; }
+	 
+	
+	public List<Request> getAllUnsycedRequests(){
+		
+		return requestRepository.getAllUnyced();
+	}
+	
+	public ResponseEntity<String> tryToSync(){
+		
+		
+		/*
+		 * List<Request> requests = syncronizationService.getAllUnsycedRequests();
+		 * if(requests.isEmpty()) { System.out.println("am empty "+requests); }
+		 */
+		List<Request> requests = getAllUnsycedRequests();
+		if (requests.isEmpty() == false) {
+			for(Request r:requests) {
+				//System.out.println(r.getRequestorId());
+				
+				// Prepare the data to be sent to HQ for this request
+
+				requestData.setRequestorId(r.getRequestorId().getId());
+				requestData.setBranchId(r.getBranchId());
+				requestData.setCarModel(r.getCarModel());
+				requestData.setVehiclePreffered(r.getVehiclePreffered());
+				requestData.setRequestDate(r.getRequestDate());
+				requestData.setRequestId(r.getRequestId());
+				
+				// Now send it
+				//String uri = "http://localhost:8080/request";
+				RestTemplate restTemplate = new RestTemplate();
+				try {
+				RequestData result = restTemplate.postForObject(SynchronizationConfiguration.uriToHq,requestData, RequestData.class);
+				} catch(Exception e) {	
+					System.out.println("We are sorry something happened we will try again later!");
+					//System.out.println(requestData.getRequestorId());
+					//e.printStackTrace();
+					throw e;	
+				}
+				
+				// If success, change the sync status
+				r.setStatus(true);
+				requestRepository.save(r);
+			}
+		}
+
+		return ResponseEntity.ok(null);
+	}
+
+}
+
+```
+### Data exchange and synchronization for head quarter office
+Here, we transfer and synchnronize all the responses we have ever sent to branch office. After we receive the car request from branch office, we log it into the requests table and then the headquarter manager can check the pending requests, find the requested car by filtering, copy the requestid and just hit assign button and the car assignment process will proceed. Under the hood, if the car is found it's detail is packed and sent to the branch office and the necessary updates in the hq table entities is performed. If not found then the rejection notification is appended on the response. Again, the neccessary fields are updated to tell that this particular request has been processed.
+
+#### Background services
+a. Sychronization properties definition
+```
+package com.IAP.car_exchange;
+
+public class SynchronizationConfiguration {
+	
+	// connection to BO
+	public static final String uriToBo = "http://s-vm.northeurope.cloudapp.azure.com:8826/details";
+	
+	// connection from BO
+	public static final String  uriFromBo = "request";
+	
+	// delay sync timer in millisecond
+	public static final int delay = 5000;
+
+}
+
+```
+
+b. Responses synchronization controller
+
+```
+@RestController
+public class ResponsesSyncController {
+	@Autowired
+	ResponsesSycService responsesSycService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(ResponsesSyncController .class);
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
+	
+	
+	@Scheduled(fixedDelay=SynchronizationConfiguration.delay)
+	public void synchronizeResponses() {
+		logger.info("Scheduled Synchronization Task :: Execution Time - {}",dateFormat.format(LocalDateTime.now()));
+		try {
+			ResponseEntity<String> sync = responsesSycService.tryToSync();
+		} catch(Exception ex) {
+			logger.error("We have run into an error: we will reconnect shortly");
+		}
+	}
+
+}
+
+```
+c. Responses synchronization service
+
+```
+@Repository
+@Data
+public class ResponsesSycService {
+	
+	final ResponsesRepository responsesRepository;
+	
+	Response response = new Response();
+	
+	public ResponsesSycService(ResponsesRepository responsesRepository) {
+		this.responsesRepository = responsesRepository;
+	}
+	
+	public List<Responses> getAllUnsycedResponses(){
+		
+		return responsesRepository.getAllUnsyc();
+	}
+	
+	
+	public ResponseEntity<String> tryToSync(){
+		
+		List<Responses> responses = getAllUnsycedResponses();
+		if (responses.isEmpty() == false) {
+			for(Responses r:responses) {
+				// Prepare the data to be sent to HQ for this request
+				response.setWorkerId(r.getWorkerId());
+				response.setPlateNumber(r.getPlateNumber());
+				response.setLicenseNumber(r.getLicenseNumber());
+				response.setModel(r.getModel());
+				response.setType(r.getType());
+				response.setVinNumber(r.getVinNumber());
+				response.setRequestId(r.getRequestId());
+				response.setRequestStatus(r.getRequestStatus());
+				response.setApprovedBy(r.getApprovedBy());
+				response.setApprovedDate(r.getApprovedDate());
+				
+				// Now send it
+	
+				RestTemplate restTemplate = new RestTemplate();
+			try {
+			Response result = restTemplate.postForObject(SynchronizationConfiguration.uriToBo,response, Response.class);
+			} catch(Exception e) {	
+				System.out.println("We are sorry something happened we will try again later! "+e);
+					throw e;	
+				}
+				
+				// If success, change the sync status
+				r.setSent(true);
+				responsesRepository.save(r);
+			}
+		}
+
+		return ResponseEntity.ok(null);
+	}
+
+}
+
+```
+#### Service layer descriptions
+Here, we explain how we implemented the car request service. We should note that, CRUD operations have also been implemented for all the data models. Follow along the following steps:-
+1. A bo user create a request -- Data access layer
+   ```
+   @Data
+   public class RequestData {
+      Long requestId;
+      Long requestorId;
+      Long branchId;
+      String carModel;
+      String vehiclePreffered;
+      Date requestDate;
+      String requestStatus;
+      String approvedBy;
+      Date approvedDate;
+      String assignedCar;
+      Boolean status;
+   }
+ 
+   ```
+   Data access interface - the repository
+   
+   ```
+   package com.IAP.car_exchange.repository;
+
+   import java.util.List;
+   import org.springframework.data.jpa.repository.JpaRepository;
+   import org.springframework.data.jpa.repository.Query;
+
+   import com.IAP.car_exchange.Model.Request;
+
+   public interface RequestRepository extends JpaRepository<Request,Long> {
+      @Query(value = "SELECT * FROM requests r ORDER BY r.request_id DESC LIMIT 1", nativeQuery = true)
+      Request getLastRecord();
+
+      @Query("SELECT r FROM Request r WHERE r.requestId=?1 AND r.assignedCar != null")
+      Request getUnassignedCar(Long requestId);
+
+      @Query("SELECT r FROM Request r WHERE r.status != true")
+      List<Request> getAllUnyced();
+   }
+   
+   ```
+2. The request is stored in the database --- service layer
+
+   A request controller
+   
+   ```
+   @RestController
+   public class RequestController {
+      @Autowired
+      Querries DataAccess;
+
+      @PostMapping("request")
+      @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+       public @ResponseBody
+       ResponseEntity<String> createRequest(@RequestBody RequestData dataHolder){
+
+         // Log this Request Locally
+           Request request = DataAccess.addRequest(
+               dataHolder.getRequestorId(),
+               dataHolder.getBranchId(),
+               dataHolder.getCarModel(),
+               dataHolder.getVehiclePreffered(),
+               //dataHolder.getRequestDate()
+               new Date()
+               );       
+
+           return ResponseEntity.ok(null);
+       }
+
+      @GetMapping("requests")
+      public @ResponseBody Iterable<Request> getRequests(){
+         return DataAccess.getAllRequests();
+      }
+
+       @GetMapping("request/{id}")
+       public Request getRequest(@PathVariable Long id){
+           return DataAccess.getRequestById(id);
+       }
+
+       @DeleteMapping("_request/{id}")
+       public ResponseEntity<String> deleteRequest(@PathVariable("id") Long id){
+           DataAccess.deleteRequest(id);
+           return ResponseEntity.ok("Removed");
+       }
+
+   }
+    
+   ```
+   
+   A request service method for adding a request only
+   
+   ```
+      public Request addRequest(Long requestorId,Long branchId,String carModel,
+    		String vehiclePreffered,Date requestDate) {
+        User user = userRepository.findById(requestorId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid requestor Id: " + requestorId));
+        Office office = officeRepository.findById(branchId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid branch Id: " + branchId));
+    	Request request = Request.builder()
+    			.requestorId(user)
+    			.branchId(branchId)
+    			.carModel(carModel)
+    			.vehiclePreffered(vehiclePreffered)
+    			.requestDate(requestDate)
+    			.status(false)
+    			.build();
+    	requestRepository.save(request);
+    	return request;
+    }
+   
+   ```
+   If successfully, the requests is transfered to the hq for further processes.
+   
+3. The hq manager will manage the requests, via the AssignCarController service
+   ```
+   @RestController
+   public class AssignCarController {
+
+	@Autowired
+	Querries DataAccess;
+	
+	@GetMapping("pendingrequests")
+	public @ResponseBody Iterable<Request> getPendingRequest(){
+		return DataAccess.getPendingRequests();
+	}
+	
+	@GetMapping("filter/{model}/{type}")
+	public @ResponseBody Iterable<Car> getCarByFilter(@PathVariable String model, @PathVariable String type) {
+		return DataAccess.getCarByModelType(model, type);
+	}
+	
+	@PostMapping("assign/{requestId}")
+		public @ResponseBody 
+		ResponseEntity<String> assign(@PathVariable Long requestId){
+		Response response = DataAccess.assign(requestId);
+		return ResponseEntity.ok(null);
+		}
+   
+   ```
+   At the end, the synchronization service will take of the rest, including sending back the response once the request has been attended.
 
 
 
