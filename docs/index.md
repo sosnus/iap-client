@@ -906,5 +906,39 @@ TODO:
 | Request form | Request list | Request liew |
 | --- | --- |--- |
 | ![view-1](./img/view1.png) | ![view-2](./img/view2.png) | ![view-3](./img/view3.png) |
-| --- | --- |--- |
+| --- | --- |--- |```
+
+# Report 4 - Performance analysis, summary and conclusions of the project
+a). Introduction
+In this part, we are trying to simulate a business logic (as one testsuite having seven steps as listed below) in an end to end manner where actors will be :-
+1. Creating car requests, 
+2. Browsing the submitted requests,
+3. Browsing the unassigned requests,
+4. Viewing a list of available car stock,
+5. Processing/assigning the cars requested,
+6. Adding cars to the stock, as new cars have just arrived to our warehouse, and
+7. Filtering the requested car by model and car type.
+![test-suite](./img/test-suite.png)
+
+* Performance testing tool
+    We use SoapUI 5.6.0 to perform Load/stress test for our REST API.
+* Testing strategies
+    * The Thread strategy - We linearly change the number of threads/virtual users from one level to another over the run of load test. We aim at establishing the threads 	       baseline above 	which the application will start flooding with errors.
+    * Simple and the Burst strategy - We set and run these two strategies in parallel to observe how the baseline test performance (i.e Simple strategy) recovers after the 	       burst.
+b). Performance analysis
+c). Summary
+d). Conclusion
+
+
+```markdown
+4. Performance analysis, summary and conclusions of the project
+Report - stage 4
+Performance analysis, summary and conclusions of the project
+Required elements:
+
+description of methodology of testing the presentation layer, or other parts of your system (what and how has been tested)
+include the results of measurements (not screenshots!)
+analysis of results
+Summary and Conclusions about the experience of work during the project from each team member
+(it's an open subject - just a couple of paragraphs. Please use this opportunity!)
  
