@@ -939,5 +939,70 @@ TODO:
 | Request form | Request list | Request liew |
 | --- | --- |--- |
 | ![view-1](./img/view1.png) | ![view-2](./img/view2.png) | ![view-3](./img/view3.png) |
-| --- | --- |--- |
+| --- | --- |--- |```
+
+# Report 4 - Performance analysis, summary and conclusions of the project
+a). Introduction
+
+In this part, we are trying to simulate a business logic (as one testsuite having seven steps as listed below) in an end to end manner where actors will be :-
+1. Creating car requests, 
+2. Browsing the submitted requests,
+3. Browsing the unassigned requests,
+4. Viewing a list of available car stock,
+5. Processing/assigning the cars requested,
+6. Adding cars to the stock, as new cars have just arrived to our warehouse, and
+7. Filtering the requested car by model and car type.
+
+The figure below shows the testsuite setup in soapUI
+![test-suite](./img/test-suite.PNG)
+
+* Performance testing tool
+
+    We use SoapUI 5.6.0 (open-source) to perform set and run the performance test for our REST API. The open-source version of SoapUI can handle a limited number of concurrent       threads (i.e [200](https://www.soapui.org/docs/load-testing/threads/)) at its basic configuration, therefore we altered these basic configurations inorder to support up to       2000 threads. However, increasing the number of threads triggers another key problem, the memory limitations which leads to not able to run a load test continuously over a 	long period of time. Yet, there is a workaround for allocating memory as described  [here](https://www.soapui.org/docs/load-testing/memory-management/) and [here](https://www.soapui.org/getting-started/working-with-soapui/improving-memory-usage/). Improving memory usage by changing the basic settings is limited on the hardware 	          capabability of the testing machine, for our case the testing computer had a 8GHz RAM and Core i5-4258U CPU @2.4GHz 2.4GHz. Due to those limitations, the simulation was 	   performed for approximately 60 minutes.
+    
+* Testing strategies
+    * The Thread strategy - We linearly change the number of threads/virtual users from one level to another over the run of load test. We aim at establishing the threads 	       baseline above 	which the application will start flooding with errors. We then, determine the average data volume which our application can handle just before errors 	         occur, and finally establish the average response time.
+
+b). Performance analysis
+
+The test was set and run as described in part (a), and logs were collected for analysis. The figure below shows the trend between threads and errors. It can be observed that after **836** threads, the total error just started to increase. The gray line depicts the bound above which the total errors are above zero.
+![threads](./img/threads.PNG)
+
+* We also observed on how much volume of data can be processed over the test period.It can be stated that as the number of threads were increasing so do the data volume (bytes) which were being sent to the server. Just before the errors a total volume of **360 GB** were transacted at a rate of 72 mbps. The plot below shows the data volume (bytes), response time (avg in millisecond), speed (bps), and threads over the test duration. Note that, the vertical scale is logarithmic.
+
+![volume](./img/volume.PNG)
+
+* The average response time in millisecond (avg) were gradually increasing as the number of threads were increasing. Just before the errors, the average response time was around **9.6 seconds**.
+
+
+c). Summary
+
+Below table depicts the overall statistical summary of the performance testing over the test duration. It can be seen that, our application had a total of 21 errors, about 400 GB data volume were transacted.
+
+![test-summary](./img/test_summary.PNG)
+
+d). Conclusion
+
+This marks the end of the project, but before the dead end each team member would like to highlight some thoughts on the challenges, skills gained, etc during the course of project realization.
+
+* First, I would like to thank God for keeping me safe during the semester. Second, I extend my heartfelt gratitude to our lecturer Mr. Wiktor Wandachowicz for his tireless 	guidance and support during the project realization. Technically, It was my first time to realize a project in an end-to-end manner from the designing and testing stage. The following were the technical skills gained during the semester for this course. First, developing a web API using the JAVA spring boot framework. It was a headache at first since I did not program with java before, but thanks to team members for their support and thoughts on some resource links. Second, the understanding of the basic architecture of the REST API, some new keywords like endpoints, resources, different layers from data access up to presentation layer, and how to differentiate them. Third, working with JPA and SQL interchangeably. Fourth, realizing synchronization between two APIs and observing that the setup works as it is supposed to work was a joyous moment. Fifthly, it was my first time working with performance testing tools like SoapUI, and I know some ins and outs of this tool, at least the open-source one, from setting up and running the test using various strategies, environment properties expansion, adjusting memory settings in a bin folder in case you want to test the heavy load, and many more. Sixth, docker basic commands knowledge, for example, commands for building and running container images. I also gained knowledge on online tools for fast-creating database table models. Working with the support team was also a great advantage of this project as we always helped each other. THANKS, TEAM 💯 -- **GODFREY**
+
+
+e) RESOURCES
+1. Concurrent threads limitation in SoapUI (https://www.soapui.org/docs/load-testing/threads/)
+2. Memory management in SoapUI part 1 (https://www.soapui.org/docs/load-testing/memory-management/)
+3. Simulating different types of load (https://www.soapui.org/docs/load-testing/simulating-different-types-of-load/)
+
+
+```markdown
+4. Performance analysis, summary and conclusions of the project
+Report - stage 4
+Performance analysis, summary and conclusions of the project
+Required elements:
+
+description of methodology of testing the presentation layer, or other parts of your system (what and how has been tested)
+include the results of measurements (not screenshots!)
+analysis of results
+Summary and Conclusions about the experience of work during the project from each team member
+(it's an open subject - just a couple of paragraphs. Please use this opportunity!)
  
