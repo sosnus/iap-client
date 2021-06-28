@@ -3,6 +3,21 @@
 | ℹ️  |  This documentation is available online [here](https://sosnus.github.io/iap-client/). |
 | --- | --- |
 
+| ℹ️  |  The source codes for hq backend is available in this [git repository](https://github.com/Wredter/IAP_project_1.git). |
+| --- | --- |
+
+| ℹ️  |  The source codes for bo backend is available in this [git repository](https://github.com/muga01/IAP_project_2.git). |
+| --- | --- |
+
+| ℹ️  |  Navigate to [report 2](#report-2---establish-the-business-context-sketch-the-system-architecture-select-technology). |
+| --- | --- |
+
+| ℹ️  |  Navigate to [report 3](#report-3---implementation-of-data-exchange-and-synchronization-headquartershq--officesbo). |
+| --- | --- |
+
+| ℹ️  |  Navigate to [report 4](#report-4---performance-analysis-summary-and-conclusions-of-the-project). |
+| --- | --- |
+
 ## Team
 
 * Monika Rosa 239113
