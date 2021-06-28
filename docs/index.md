@@ -305,9 +305,11 @@ Application get list of users using service `fleet_service`, convert it into lis
 Just an update, this is the HQ and BO setup.
 ![hq_bo_setup](./img/back_setup.png)
 
-## Data Models
+## Application - Backend
+
+### Data Models
 As of now the data models for headquarters and branch office look pretty similar except for the responses model which takes care of all the responses the hq have ever sent to the branch office and some columns entries at branch office model are meant for data synchronization purposes.
-### HQ Model
+#### HQ Model
 ![hqmodel](./img/hqmodel.JPG)
 Down below we paste a sample code for the HQ office entity as implemented in our application.
 ```java
@@ -427,7 +429,7 @@ public class User {
 }
 
 ```
-## Implementation of data exchange and synchronization
+### Implementation of data exchange and synchronization
 We use [RestTemplate](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html) class under org.springframework.web.client package to manage data exchange, and for synchronization tasks we use [TaskSchedular interfaces](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/scheduling.html) in spring boot just by enabling the scheduling at the main application and use @ annotation for each method/class we need to schedule.
 
 Enabling Scheduling in spring boot main application, @EnableScheduling and @EnableSwagger2 for documentation.
@@ -458,7 +460,7 @@ public class CarExchangeApplication {
 
 ```
 
-### Data exchange and synchronization for branch office
+#### Data exchange and synchronization for branch office
 Firstly, assuming the office, role and user have been commissioned already, A user will create a request, this request will be stored in a local branch database and the RestTemplate.postForObject() method will be invoked to transmit this request to headquarter office. Incase any failure, scheduling/synchronization has been enabled in such a way that after every 10 seconds the failed requests will be retransmitted again. Entities like User,Office, and Request have beeen synchronized such that there is a copy of each of them at the HQ server/database.
 
 a. Synchronization properties definition
@@ -597,10 +599,10 @@ public class SyncronizationService {
 }
 
 ```
-### Data exchange and synchronization for head quarter office
+#### Data exchange and synchronization for head quarter office
 Here, we transfer and synchnronize all the responses we have ever sent to branch office. After we receive the car request from branch office, we log it into the requests table and then the headquarter manager can check the pending requests, find the requested car by filtering, copy the requestid and just hit assign button and the car assignment process will proceed. Under the hood, if the car is found it's detail is packed and sent to the branch office and the necessary updates in the hq table entities is performed. If not found then the rejection notification is appended on the response. Again, the neccessary fields are updated to tell that this particular request has been processed.
 
-#### Background services
+##### Background services
 a. Sychronization properties definition
 ```java
 package com.IAP.car_exchange;
@@ -705,7 +707,7 @@ public class ResponsesSycService {
 }
 
 ```
-#### Service layer descriptions
+##### Service layer descriptions
 Here, we explain how we implemented the car request service. We should note that, CRUD operations have also been implemented for all the data models. Follow along the following steps:-
 1. A bo user create a request -- Data access layer
    ```java
@@ -850,7 +852,501 @@ Here, we explain how we implemented the car request service. We should note that
 
 
 
+
+## Application - Frontend
+
+Application was prepared for multiplatform using. During tests, we use 3 deployment types:
+* iOS application
+* Android application
+* Web application
+
+Application was prepared for different screen sizes and proportions (landscape, horizontal, browser window)
+
+![vImage](./img/frontend-multiplatform.png) 
+
+
+Application can be used as Headquater or Branch office, and can automaticly adapt to type of office (HQ/BO). Main color theme and operations are depends on office type.
+
+#### Differnt office types 
+At the beginning of application, user can select backend application, where he want do activities. API client is prepared at next screen (Page Login).
+
+Moreover, at login login screen we initialized the most important libraries.
+```dart
+import 'package:apiconsument/data/servers.dart';
+import 'package:apiconsument/page_menu.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'data/api_service.dart';
+
+class MaterialAppHome extends StatelessWidget {
+  final Server choosenServer;
+  MaterialAppHome(this.choosenServer);
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider(
+      create: (_) => ApiService.create(choosenServer.address),
+      dispose: (context, ApiService service) => service.client.dispose(),
+      child: MaterialApp(
+        theme: ThemeData.from(
+          colorScheme: choosenServer.colorScheme,
+        ),
+        title: choosenServer.type + ' ' + choosenServer.city,
+        home: PageMenu(
+          choosenServer: choosenServer,
+        ),
+      ),
+    );
+  }
+}
+```
+Important libraries:
+* Provider - library to manage communication between screens
+* Chopper (here called ApiService) - library for managing API service
+* Material - library with Material Design style widgets
+
+#### Dynamic build
+
+Some views are used to build both application (for example PageListRequestsCars - but this page have a lot of differences between different office type. First - if this is HQ, list can show only pending request, and if it is HQ, user have extra button "Assign" on this page)
+
+```dart
+import 'dart:convert';
+import 'data/api_service.dart';
+import 'data/requestCar.dart';
+import 'data/servers.dart';
+import 'package:apiconsument/page_one_requestCar.dart';
+import 'package:chopper/chopper.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class PageListRequestsCars extends StatelessWidget {
+  final Server choosenServer;
+  final bool isPendings;
+
+  const PageListRequestsCars({
+    Key? key,
+    required this.isPendings,
+    required this.choosenServer,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('List: Requests Cars' + (isPendings ? ' Pendings' : ' ')),
+      ),
+      body: _buildList(context),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  FutureBuilder<Response> _buildList(BuildContext context) {
+    return FutureBuilder<Response>(
+      future: isPendings
+          ? Provider.of<ApiService>(context).requestsPendingsAll()
+          : Provider.of<ApiService>(context).requestsAll(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final List requestsCarsCollection =
+              json.decode(snapshot.data!.bodyString);
+          final List<RequestCar> requestCar = [];
+          for (var item in requestsCarsCollection) {
+            requestCar.add(RequestCar.fromJson(item));
+          }
+          if (requestCar.length == 0) {
+            if (isPendings) {
+              return ListView(
+                children: [
+                  Center(
+                    child: Text(
+                      "No pendings requests!",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return ListView(
+                children: [
+                  Center(
+                    child: Text(
+                      "No requests!",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              );
+            }
+          }
+          return _buildRequestCarList(context, requestCar);
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+
+  ListView _buildRequestCarList(BuildContext context, List<RequestCar> posts) {
+    return ListView.builder(
+      itemCount: posts.length,
+      padding: EdgeInsets.all(8),
+      itemBuilder: (context, index) {
+        return InkWell(
+          child: posts[index].showAsCard(),
+          onTap: () =>
+              _navigateToRequestDetails(context, posts[index].requestId),
+        );
+      },
+    );
+  }
+
+  _navigateToRequestDetails(BuildContext context, int requestId) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PageOneRequesCar(
+          choosenServer: choosenServer,
+          requestId: requestId,
+          isPending: isPendings,
+        ),
+      ),
+    );
+  }
+}
+
+```
+
+#### API consumption
+
+API is consumed using Chopper library. This library can generate class for http API using simple abstract class. "To define a client, use the @ ChopperApi annotation on an abstract class that extends the ChopperService class." More information: https://github.com/lejard-h/chopper/blob/master/getting-started.md 
+As we see, service address is declarated at initialization, so we can use one API instance to prepare a lot of API services.
+
+#### Chopper API class before generate
+
+```dart
+import 'package:chopper/chopper.dart';
+
+part 'api_service.chopper.dart';
+
+@ChopperApi()
+abstract class ApiService extends ChopperService {
+  @Get(path: '/user/{id}')
+  Future<Response> userById(@Path('id') int id);
+
+  @Post(path: '/assign/{requestCarId}')
+  Future<Response> assignRequestCar(@Path('requestCarId') int requestCarId);
+
+  @Get(path: '/users')
+  Future<Response> usersAll();
+
+  @Get(path: '/office/{id}')
+  Future<Response> officeById(@Path('id') int id);
+
+  @Get(path: '/offices')
+  Future<Response> officeAll();
+
+  @Get(path: '/requests')
+  Future<Response> requestsAll();
+
+  @Post(path: '/request')
+  Future<Response> postNewRequestCar(@Body() Map<String, dynamic> myRequest);
+
+  @Get(path: '/pendingrequests')
+  Future<Response> requestsPendingsAll();
+
+  @Get(path: '/request/{id}')
+  Future<Response> requestById(@Path('id') int id);
+
+  @Get(path: '/car/{plateNumber}')
+  Future<Response> carByPlateNumber(@Path('plateNumber') String plateNumber);
+
+  @Delete(path: '/_car/{plateNumber}')
+  Future<Response> deleteCarByPlateNumber(
+      @Path('plateNumber') String plateNumber);
+
+  @Delete(path: '/_user/{userId}')
+  Future<Response> deleteUserById(@Path('userId') String userId);
+
+  @Post(path: '/user')
+  Future<Response> postNewUser(@Body() Map<String, dynamic> myUser);
+
+  @Get(path: '/cars')
+  Future<Response> carAll();
+
+  @Get(path: '/posts')
+  Future<Response> getPosts();
+
+  @Get(path: '/posts/{id}')
+  Future<Response> getPost(@Path('id') int id);
+
+  @Post()
+  Future<Response> postPost(
+    @Body() Map<String, dynamic> body,
+  );
+
+  static ApiService create(String address) {
+    final client = ChopperClient(
+      baseUrl: address,
+      services: [
+        _$ApiService(),
+      ],
+      interceptors: [HttpLoggingInterceptor(), CurlInterceptor()],
+      converter: JsonConverter(),
+    );
+
+    return _$ApiService(client);
+  }
+}
+```
+To generate file, in console user must type `flutter packages pub run build_runner watch` - this command observed abstract API class and generate new class with endpoints at every file saving.
+
+
+#### Chopper API class after generate
+```dart
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'api_service.dart';
+
+// **************************************************************************
+// ChopperGenerator
+// **************************************************************************
+
+// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations
+class _$ApiService extends ApiService {
+  _$ApiService([ChopperClient? client]) {
+    if (client == null) return;
+    this.client = client;
+  }
+
+  @override
+  final definitionType = ApiService;
+
+  @override
+  Future<Response<dynamic>> userById(int id) {
+    final $url = '/user/$id';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> assignRequestCar(int requestCarId) {
+    final $url = '/assign/$requestCarId';
+    final $request = Request('POST', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> usersAll() {
+    final $url = '/users';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> officeById(int id) {
+    final $url = '/office/$id';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> officeAll() {
+    final $url = '/offices';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> requestsAll() {
+    final $url = '/requests';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> postNewRequestCar(Map<String, dynamic> myRequest) {
+    final $url = '/request';
+    final $body = myRequest;
+    final $request = Request('POST', $url, client.baseUrl, body: $body);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> requestsPendingsAll() {
+    final $url = '/pendingrequests';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> requestById(int id) {
+    final $url = '/request/$id';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> carByPlateNumber(String plateNumber) {
+    final $url = '/car/$plateNumber';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> deleteCarByPlateNumber(String plateNumber) {
+    final $url = '/_car/$plateNumber';
+    final $request = Request('DELETE', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> deleteUserById(String userId) {
+    final $url = '/_user/$userId';
+    final $request = Request('DELETE', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> postNewUser(Map<String, dynamic> myUser) {
+    final $url = '/user';
+    final $body = myUser;
+    final $request = Request('POST', $url, client.baseUrl, body: $body);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> carAll() {
+    final $url = '/cars';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> getPosts() {
+    final $url = '/posts';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> getPost(int id) {
+    final $url = '/posts/$id';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> postPost(Map<String, dynamic> body) {
+    final $url = '';
+    final $body = body;
+    final $request = Request('POST', $url, client.baseUrl, body: $body);
+    return client.send<dynamic, dynamic>($request);
+  }
+}
+
+```
+
+#### API debugging
+Library can show every used request as cURL request, it can help to debug or error reproduction. It is easy to compare request from Flutter with request from Postman (both tools have option export request to cURL)
+![vImage](./img/frontend-curl.png) 
+
+
+
+
+#### New page, new request
+
+Requests are send when user open new page. When view is not ready, builder show Circular indicator. Application wait for respond or timeout.
+
+```dart
+import 'data/api_service.dart';
+import 'data/servers.dart';
+import 'data/user.dart';
+import 'package:chopper/chopper.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'page_add_offices.dart';
+import 'page_menu.dart';
+import 'page_list_users.dart';
+
+class PageAfterAddUser extends StatelessWidget {
+  final User user;
+  final Server choosenServer;
+
+  const PageAfterAddUser(
+      {Key? key, required this.user, required this.choosenServer})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('User added: ' + user.id.toString()),
+      ),
+      body: _buildList(context),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.backpack_outlined),
+        onPressed: () => _navigateToAddOffice(context),
+      ),
+    );
+  }
+
+  FutureBuilder<Response> _buildList(BuildContext context) {
+    return FutureBuilder<Response>(
+      future: Provider.of<ApiService>(context).postNewUser(user.toJson()),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final String myRespond = snapshot.data!.bodyString;
+          return _buildPosts(context, myRespond);
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+
+
+Widget _buildPosts(BuildContext context, String myRespond) {
+...
+
+void _navigateToAddOffice(BuildContext context) {
+...
+
+```
+
+
+#### Views design - project
+First project was prepared in Figma application - tool to UI design.
+
+![vImage](./img/frontend-figma.png) 
+
+
+#### Flutter, Dart, Debug
+Dart have a lot of tools (called DartDevTools) which can support develop process.
+
+![vImage](./img/frontend-debug.png) 
+
+
+
+
+
+.
+.
+.
+.
+.
+.
+.
+
 ```markdown
+
 ## Report task (description)
 https://ftims.edu.p.lodz.pl/mod/assign/view.php?id=34532
 Report - stage 3
