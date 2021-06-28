@@ -311,8 +311,8 @@ Application get list of users using service `fleet_service`, convert it into lis
 
 
 # Report 3 - Implementation of data exchange and synchronization (headquarters(HQ) / offices(BO))
-Just an update, this is the HQ and BO setup.
-![hq_bo_setup](./img/back_setup.png)
+![hqmodel](./deployment-diagram-28-06-2021.png)
+
 
 ## Application - Backend
 
@@ -864,7 +864,7 @@ Here, we explain how we implemented the car request service. We should note that
 
 ## Application - Frontend
 
-![vImage](./img/frontend-gif.gif) 
+![Image](./img/frontend-gif.gif) 
 
 
 Application was prepared for multiplatform usages. During tests, we use 3 deployment types:
