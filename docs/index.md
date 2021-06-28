@@ -1,16 +1,12 @@
 # Fleet management system
 
+# Overview and introduction
 | ℹ️  |  This documentation is available online [here](https://sosnus.github.io/iap-client/). |
 | --- | --- |
-
-| ℹ️  |  Navigate to [report 2](#report-2---establish-the-business-context-sketch-the-system-architecture-select-technology). |
-| --- | --- |
-
-| ℹ️  |  Navigate to [report 3](#report-3---implementation-of-data-exchange-and-synchronization-headquartershq--officesbo). |
-| --- | --- |
-
-| ℹ️  |  Navigate to [report 4](#report-4---performance-analysis-summary-and-conclusions-of-the-project). |
-| --- | --- |
+| ℹ️  |  Navigate to [Report 1](#report-1---feasibility-study-of-communication-between-systems) |
+| ℹ️  |  Navigate to [Report 2](#report-2---establish-the-business-context-sketch-the-system-architecture-select-technology) |
+| ℹ️  |  Navigate to [Report 3](#report-3---implementation-of-data-exchange-and-synchronization-headquartershq--officesbo) |
+| ℹ️  |  Navigate to [Report 4](#report-4---performance-analysis-summary-and-conclusions-of-the-project) |
 
 ## Team
 
@@ -23,8 +19,8 @@
 The main objective of this project is to create a IT System for managing car fleet for the company, which consists of a headquarter and few branch offices located in different cities (Lodz, Warsaw, Cracow). Our solution connects the information systems of company's headquarters and its branches and allows enterprise to manage their car fleet. We have prepared working Web Service and Flutter Android client.
 
 ### **Repositories**
-* Backend Hq repository [here](https://github.com/Wredter/IAP_project_1).
-* Backend bo repository [here](https://github.com/muga01/IAP_project_2).
+* Backend HQ repository [here](https://github.com/Wredter/IAP_project_1).
+* Backend BO repository [here](https://github.com/muga01/IAP_project_2).
 * Frontend repository [here](https://github.com/sosnus/apiconsument).
 
 Documentation, scripts (and special frontend for 1st repo) [here](https://github.com/sosnus/iap-client)
@@ -46,15 +42,13 @@ Documentation, scripts (and special frontend for 1st repo) [here](https://github
 
 * [HQ Warsaw office](https://iap-warsaw-hq.azurewebsites.net/)
 * [BO Lodz office](https://iap-lodz-bo.azurewebsites.net/)
-* [BO Cracow office](https://iap-cracow-bo.azurewebsites.net/)
 
 Backend containers are hosted on ASP (App Service Plan) with 28 other applications. ASP based on tier B2 and have: 3.5GB RAM and 2vCPU cores 
 
-Databases containers are hosted on Azure Virtual Machine with a lot of tthers containers and services. VM size: Standard B1ms 1vCPU, 2GB RAM. Containers are separated and are ready to migration.
+Databases containers are hosted on Azure Virtual Machine with a lot of others containers and services. VM size: Standard B1ms 1vCPU, 2GB RAM. Containers are separated and are ready to migration.
 
-
-# TODO: new diagram
-![DBeaver](./img/deployment-diagram.png)
+## Deployment diagram
+![hqmodel](./deployment-diagram-28-06-2021.png)
 
 When developer build and push image, webhooks will deploy container at ASP.
 
@@ -73,8 +67,6 @@ docker build -t sosnuscontainers.azurecr.io/iap-cracow-bo .
 docker push sosnuscontainers.azurecr.io/iap-cracow-bo
 
 ```
-# TODO: new backend address
-
 
 # Report 1 - Feasibility study of communication between systems
 
