@@ -238,7 +238,7 @@ Builder(
 Application get list of users using service `fleet_service`, convert it into list of `User` objects, and present it as `ListTile` widgets:
 ![front-users-view](./img/front-users-view.png)
 
-## references and sources for 1st report
+### RESOURCES for Report 1
 * [REST API in flutter](https://www.youtube.com/watch?v=M8zM48Jytv0)
 * [Flutter documentation](https://flutter.dev/docs)
 * [Create database users](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql)
@@ -292,8 +292,7 @@ Application get list of users using service `fleet_service`, convert it into lis
 2. BO car details are updated. 
 * Final conditions: car is assigned to worker.
 
-## References and sources for 2nd report
-
+## RESOURCES for report 2
 * [UML deployment diagram guide](http://www.agilemodeling.com/artifacts/deploymentDiagram.htm)
 * [UML activity diagram](http://www.agilemodeling.com/style/activityDiagram.htm)
 
@@ -1343,7 +1342,7 @@ Dart have a lot of tools (called DartDevTools) which can support develop process
 
 ![vImage](./img/frontend-debug.png)
 
-### RESOURCES
+### RESOURCES for Report 3
 1. [REST Template for Data Exchange](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html)
 2. [Task Schedular interfaces for Data Synchronization](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/scheduling.html)
 3. [Setting Up Swagger 2 with a Spring REST API](https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api)
@@ -1408,7 +1407,7 @@ This marks the end of the project, but before the dead end each team member woul
 * Spring boot is nice framework for API development and backend applications as it has made easier to fast create a web application. Using swagger-ui.html endpoint we can rapid test backend service inside browser - we do not need postman, curl or SoapUI for it. Taking part in this project was a great opportunity for me to expand not only technical abilities but also my multi-tasking skills, managerial as well as organizational skills. ~**WIKTOR MURASZKO**
 
 
-e) RESOURCES
+e) RESOURCES for report 4
 1. [Concurrent threads limitation in SoapUI](https://www.soapui.org/docs/load-testing/threads/)
 2. [Memory management in SoapUI part 1 ](https://www.soapui.org/docs/load-testing/memory-management/)
 3. [Memory management in SoapUI part 2 ](https://www.soapui.org/getting-started/working-with-soapui/improving-memory-usage/)
