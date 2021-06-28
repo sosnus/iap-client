@@ -1340,10 +1340,11 @@ First project was prepared in Figma application - tool to UI design.
 ![Image](./img/frontend-figma.png) 
 
 This table shows samples of views from figma and their Flutter implementations
-| Create user form | Request list | Request liew |
-| --- | --- |--- |
-| ![view-1](./img/front-figma-create-user.png) | ![view-2](./img/view2.png) | ![view-3](./img/view3.png) |
-| ![view-1](./img/front-add-user.png) | ![view-2](./img/front-requess-list.png) | ![view-3](./img/front-details.png) |
+(Violet - figma design, orange - Flutter implementation)
+
+![view-1](./img/front-figma-create-user.png) , ![view-1](./img/front-add-user.png)
+![view-2](./img/view2.png) , ![view-2](./img/front-requess-list.png)
+![view-3](./img/view3.png) , ![view-3](./img/front-details.png)
 
 ### Flutter, Dart, Debug
 Dart have a lot of tools (called DartDevTools) which can support develop process.
