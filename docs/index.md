@@ -879,7 +879,7 @@ Application was prepared for different screen sizes and proportions (landscape, 
 
 Application can be used as Headquater or Branch office, and can automaticaly adapt to type of office (HQ/BO). Main color theme and operations depend on office type.
 
-#### Differnt office types 
+### Differnt office types 
 At the beginning of application, user can select backend application, where he wants do activities. API client is prepared at the next screen (Page Login).
 
 Moreover, at login login screen, we initialize the most important libraries.
@@ -917,7 +917,7 @@ Important libraries:
 * Chopper (here called ApiService) - library for managing API service
 * Material - library with Material Design style widgets
 
-#### Dynamic build
+### Dynamic build
 
 Some views are used to build both application (for example PageListRequestsCars - but this page has a lot of differences between different office types. First - if this is HQ, list can show only pending request, and if it is HQ, user have extra button "Assign" on this page)
 
@@ -1034,12 +1034,12 @@ class PageListRequestsCars extends StatelessWidget {
 
 ```
 
-#### API consumption
+### API consumption
 
 API is consumed using Chopper library. This library can generate class for http API using simple abstract class. "To define a client, use the @ ChopperApi annotation on an abstract class that extends the ChopperService class." [More information:](https://github.com/lejard-h/chopper/blob/master/getting-started.md)
 As we see, service address is declared during initialization, so we can use one API instance to prepare a lot of API services.
 
-#### Chopper API class before generate
+### Chopper API class before generate
 
 ```dart
 import 'package:chopper/chopper.dart';
@@ -1119,7 +1119,7 @@ abstract class ApiService extends ChopperService {
 To generate file, in console user must type `flutter packages pub run build_runner watch` - this command observed abstract API class and generate new class with endpoints at every file saved.
 
 
-#### Chopper API class after generate
+### Chopper API class after generate
 ```dart
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
@@ -1264,14 +1264,14 @@ class _$ApiService extends ApiService {
 
 ```
 
-#### API debugging
+### API debugging
 Library can show every used request as cURL request, it can help to debug or error reproduction. It is easy to compare request from Flutter with request from Postman (both tools have option export request to cURL)
 ![vImage](./img/frontend-curl.png) 
 
 
 
 
-#### New page, new request
+### New page, new request
 
 Requests are send when user open new page. When view is not ready, builder show Circular indicator. Application wait for respond or timeout.
 
@@ -1334,191 +1334,24 @@ void _navigateToAddOffice(BuildContext context) {
 ```
 
 
-#### Views design - project
+### Views design - project
 First project was prepared in Figma application - tool to UI design.
 
-![vImage](./img/frontend-figma.png) 
+![Image](./img/frontend-figma.png) 
 
+This table shows samples of views from figma and their Flutter implementations
+| Create user form | Request list | Request liew |
+| --- | --- |--- |
+| ![view-1](./img/front-figma-create-user.png) | ![view-2](./img/view2.png) | ![view-3](./img/view3.png) |
+| ![view-1](./img/front-add-user.png) | ![view-2](./img/front-requess-list.png) | ![view-3](./img/front-details.png) |
 
-#### Flutter, Dart, Debug
+### Flutter, Dart, Debug
 Dart have a lot of tools (called DartDevTools) which can support develop process.
 
 ![vImage](./img/frontend-debug.png)
 
-## RESOURCES
+### RESOURCES
 1. [REST Template for Data Exchange](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html)
 2. [Task Schedular interfaces for Data Synchronization](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/scheduling.html)
 3. [Setting Up Swagger 2 with a Spring REST API](https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api)
 4. [How does Chopper work?](https://github.com/lejard-h/chopper/blob/master/getting-started.md)
-
-
-
-
-
-.
-.
-.
-.
-.
-.
-.
-
-```markdown
-
-## Report task (description)
-https://ftims.edu.p.lodz.pl/mod/assign/view.php?id=34532
-Report - stage 3
-Determine data models (headquarters / branches),
-Implementation of data exchange and synchronization (headquarters / branches)
-Required elements:
-
-background service (in headquarter and/or branch server) that performs periodic data synchronization
-fault tolerance when connection between HQ and branches is not available (try to synchronize next time)
-Also:
-completion of service layer, and user interface in client applications
-presentation of running applications
-presentation of data exchange or data synchronization between headquarters and branches
-
-TODO:
-* Figma models
-* Backend implementation:
-  * CRUD
-  * Authorisation
-  * Business layer
-  * Unit test
-  * find way to pass run arguments after build (like connection string or sth)
-* Frontend
-  * Login
-  * All views
-  * Unit test
-* Database
-  * DB for every deployment (2x BO, 1x HQ)
-```
-
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-
-
-
-
-| Request form | Request list | Request liew |
-| --- | --- |--- |
-| ![view-1](./img/view1.png) | ![view-2](./img/view2.png) | ![view-3](./img/view3.png) |
-| --- | --- |--- |```
-
-# Report 4 - Performance analysis, summary and conclusions of the project
-a). Introduction
-
-In this part, we are trying to simulate the business logic (as one testsuite having seven steps as listed below) in an end to end manner where actors will be :-
-1. Creating car requests, 
-2. Browsing the submitted requests,
-3. Browsing the unassigned requests,
-4. Viewing a list of available car stock,
-5. Processing/assigning the cars requested,
-6. Adding cars to the stock, as new cars have just arrived to our warehouse, and
-7. Filtering the requested car by model and car type.
-
-The figure below shows the testsuite setup in soapUI
-![test-suite](./img/test-suite.PNG)
-
-* Performance testing tool
-
-    We use SoapUI `5.6.0` (open-source) to perform set and run the performance test for our REST API. The open-source version of SoapUI can handle a limited number of concurrent       threads (i.e [200](https://www.soapui.org/docs/load-testing/threads/)) at its basic configuration, therefore we altered these basic configurations inorder to support up to       2000 threads. However, increasing the number of threads triggers another key problem, the memory limitations which leads to not able to run a load test continuously over a 	long period of time. Yet, there is a workaround for improving memory usage as described  [here](https://www.soapui.org/docs/load-testing/memory-management/) and [here](https://www.soapui.org/getting-started/working-with-soapui/improving-memory-usage/). Improving memory usage by changing the basic settings is limited on the hardware 	          capabability of the testing machine, for our case the testing computer had a 8GHz RAM and Core i5-4258U CPU @2.4GHz 2.4GHz. Due to those limitations, the simulation was 	   performed for approximately 60 minutes.
-    
-* Testing strategies
-    * The Thread strategy - We linearly change the number of threads/virtual users from one level to another over the run of load test. We aim at establishing the threads 	       baseline above 	which the application will start flooding with errors. We then, determine the average data volume which our application can handle just before errors 	         occur, and finally establish the average response time.
-
-b). Performance analysis
-
-The test was set and run as described in part (a), and logs were collected for analysis. The figure below shows the trend between threads and errors. It can be observed that after **836** threads, the total error just started to increase. The gray line depicts the bound above which the total errors are above zero.
-![threads](./img/threads.PNG)
-
-* We also observed on how much volume of data can be processed over the test period.It can be stated that as the number of threads were increasing so do the data volume (bytes) which were being sent to the server. Just before the errors a total volume of **360 GB** were transacted at a rate of 72 mbps. The plot below shows the data volume (bytes), response time (avg in millisecond), speed (bps), and threads over the test duration. Note that, the vertical scale is logarithmic.
-
-![volume](./img/volume.PNG)
-
-* The average response time in millisecond (avg) were gradually increasing as the number of threads were increasing. Just before the errors, the average response time was around **9.6 seconds**.
-
-
-c). Summary
-
-Below table depicts the overall statistical summary of the performance testing over the test duration. It can be seen that, our application had a total of 21 errors, about 400 GB data volume were transacted.
-
-![test-summary](./img/test_summary.PNG)
-
-d). Conclusion
-
-This marks the end of the project, but before the dead end each team member would like to highlight some thoughts on the challenges, skills gained, etc during the course of project realization.
-
-* First, I would like to thank God for keeping me safe during the semester. Second, I extend my heartfelt gratitude to our lecturer Mr. Wiktor Wandachowicz for his tireless 	guidance and support during the project realization. Technically, It was my first time to realize a project in an end-to-end manner from the designing and testing stage. The following were the technical skills gained during the semester for this course. First, developing a web API using the JAVA spring boot framework. It was a headache at first since I did not program with java before, but thanks to team members for their support and thoughts on some resource links. Second, the understanding of the basic architecture of the REST API, some new keywords like endpoints, resources, different layers from data access up to presentation layer, and how to differentiate them. Third, working with JPA and SQL interchangeably. Fourth, realizing synchronization between two APIs and observing that the setup works as it is supposed to work was a joyous moment. Fifthly, it was my first time working with performance testing tools like SoapUI, and I know some ins and outs of this tool, at least the open-source one, from setting up and running the test using various strategies, environment properties expansion, adjusting memory settings in a bin folder in case you want to test the heavy load, and many more. Sixth, docker basic commands knowledge, for example, commands for building and running container images. I also gained knowledge on online tools for fast-creating database table models. Working with the support team was also a great advantage of this project as we always helped each other. THANKS, TEAM 💯 -- **GODFREY**
-* Participation in the project gave me an opportunity to amplify my interests and was an outstanding chance to expand my knowledge of developing web applications. Among the skills and knowledge acquired during the project is the understanding of the architecture of REST API. My knowledge about software engineering and User Interface designing was significantly extended. During project realisation I had used Figma application in order to design views, which was a new experience for me. Due to Figma’s useful prototyping features, I plan to use this tool in the future as well. Furthermore, I expanded my knowledge of software engineering such as creating diagrams (deployment diagram, activity diagram) with usage of online tools and describing use cases. Moreover, I have improved my organisational, interpersonal and managerial skills. Working in the team, was a beneficial experience and allowed us to exchange our knowledge. All team members were supportive, reliable and engaged in the work, therefore it has been a pleasure working with all of you. – **MONIKA ROSA**
-
-
-e) RESOURCES
-1. [Concurrent threads limitation in SoapUI](https://www.soapui.org/docs/load-testing/threads/)
-2. [Memory management in SoapUI part 1 ](https://www.soapui.org/docs/load-testing/memory-management/)
-3. [Memory management in SoapUI part 2 ](https://www.soapui.org/getting-started/working-with-soapui/improving-memory-usage/)
-4. [Simulating different types of load](https://www.soapui.org/docs/load-testing/simulating-different-types-of-load/)
-
-
-```markdown
-4. Performance analysis, summary and conclusions of the project
-Report - stage 4
-Performance analysis, summary and conclusions of the project
-Required elements:
-
-description of methodology of testing the presentation layer, or other parts of your system (what and how has been tested)
-include the results of measurements (not screenshots!)
-analysis of results
-Summary and Conclusions about the experience of work during the project from each team member
-(it's an open subject - just a couple of paragraphs. Please use this opportunity!)
- 
