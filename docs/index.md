@@ -3,6 +3,15 @@
 | ℹ️  |  This documentation is available online [here](https://sosnus.github.io/iap-client/). |
 | --- | --- |
 
+| ℹ️  |  Navigate to [report 2](#report-2---establish-the-business-context-sketch-the-system-architecture-select-technology). |
+| --- | --- |
+
+| ℹ️  |  Navigate to [report 3](#report-3---implementation-of-data-exchange-and-synchronization-headquartershq--officesbo). |
+| --- | --- |
+
+| ℹ️  |  Navigate to [report 4](#report-4---performance-analysis-summary-and-conclusions-of-the-project). |
+| --- | --- |
+
 ## Team
 
 * Monika Rosa 239113
@@ -14,9 +23,9 @@
 The main objective of this project is to create a IT System for managing car fleet for the company, which consists of a headquarter and few branch offices located in different cities (Lodz, Warsaw, Cracow). Our solution connects the information systems of company's headquarters and its branches and allows enterprise to manage their car fleet. We have prepared working Web Service and Flutter Android client.
 
 ### **Repositories**
-Backend repository [here](https://github.com/Wredter/IAP_project_1).
-
-Frontend repository [here](https://github.com/sosnus/apiconsument).
+* Backend Hq repository [here](https://github.com/Wredter/IAP_project_1).
+* Backend bo repository [here](https://github.com/muga01/IAP_project_2).
+* Frontend repository [here](https://github.com/sosnus/apiconsument).
 
 Documentation, scripts (and special frontend for 1st repo) [here](https://github.com/sosnus/iap-client)
 
@@ -28,9 +37,9 @@ Documentation, scripts (and special frontend for 1st repo) [here](https://github
     * Java Spring `Spring Boot (v2.4.3)`
 * Frontend
     * Flutter `Flutter 2.2.2`
-        * Android ![Flutter Android](https://img.shields.io/badge/Android-yes-green)
-        * Web ![Flutter Web](https://img.shields.io/badge/Web-yes-green)
-        * Web container ![Flutter Web container](https://img.shields.io/badge/Web%20container-not%20yet-red)
+        * Android [Flutter Android](https://img.shields.io/badge/Android-yes-green)
+        * Web [Flutter Web](https://img.shields.io/badge/Web-yes-green)
+        * Web container [Flutter Web container](https://img.shields.io/badge/Web%20container-not%20yet-red)
 
 ### Production deployment
 #### Production deployment links
@@ -311,7 +320,7 @@ Just an update, this is the HQ and BO setup.
 As of now the data models for headquarters and branch office look pretty similar except for the responses model which takes care of all the responses the hq have ever sent to the branch office and some columns entries at branch office model are meant for data synchronization purposes.
 #### HQ Model
 ![hqmodel](./img/hqmodel.JPG)
-Down below we paste a sample code for the HQ office entity as implemented in our application.
+Below we paste a sample code for the HQ office entity as implemented in our application.
 ```java
 
 @Entity
@@ -348,7 +357,7 @@ public class Office {
 
 ### BO Model
 ![bomodel](./img/bomodel.JPG)
-Down below we paste a sample code for the bo users entity as implemented in our application.
+Below we paste a sample code for the bo users entity as implemented in our application.
 ```java
 @Entity
 @Table(name = "users")
@@ -430,7 +439,7 @@ public class User {
 
 ```
 ### Implementation of data exchange and synchronization
-We use [RestTemplate](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html) class under org.springframework.web.client package to manage data exchange, and for synchronization tasks we use [TaskSchedular interfaces](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/scheduling.html) in spring boot just by enabling the scheduling at the main application and use @ annotation for each method/class we need to schedule.
+We use [RestTemplate](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html) class under org.springframework.web.client package to manage data exchange, and for synchronization, we use [TaskSchedular interfaces](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/scheduling.html) in spring boot by enabling the scheduling at the main application and use @ annotation for each method/class we need to schedule.
 
 Enabling Scheduling in spring boot main application, @EnableScheduling and @EnableSwagger2 for documentation.
 ```java
@@ -461,7 +470,7 @@ public class CarExchangeApplication {
 ```
 
 #### Data exchange and synchronization for branch office
-Firstly, assuming the office, role and user have been commissioned already, A user will create a request, this request will be stored in a local branch database and the RestTemplate.postForObject() method will be invoked to transmit this request to headquarter office. Incase any failure, scheduling/synchronization has been enabled in such a way that after every 10 seconds the failed requests will be retransmitted again. Entities like User,Office, and Request have beeen synchronized such that there is a copy of each of them at the HQ server/database.
+Firstly, assuming the office, role and user have been commissioned already, A user will create a request, this request will be stored in a local branch database and the RestTemplate.postForObject() method will be invoked to transfer this request to headquarter office. Incase of any failure, scheduling/synchronization has been enabled in such a way that after every 10 seconds the failed requests will be retransmitted again. Entities like User,Office, and Request have beeen synchronized such that there is a copy of each of them at the HQ server/database.
 
 a. Synchronization properties definition
 ```java
@@ -600,7 +609,7 @@ public class SyncronizationService {
 
 ```
 #### Data exchange and synchronization for head quarter office
-Here, we transfer and synchnronize all the responses we have ever sent to branch office. After we receive the car request from branch office, we log it into the requests table and then the headquarter manager can check the pending requests, find the requested car by filtering, copy the requestid and just hit assign button and the car assignment process will proceed. Under the hood, if the car is found it's detail is packed and sent to the branch office and the necessary updates in the hq table entities is performed. If not found then the rejection notification is appended on the response. Again, the neccessary fields are updated to tell that this particular request has been processed.
+Here, we transfer and synchnronize all the responses we have ever sent to the branch office. After we receive the car request from the branch office, we log it into the requests table and then the headquarter manager can check the pending requests, find the requested car by filtering, copy the requestid and just hit assign button and the car assignment process will proceed. Under the hood, if the car is found it's detail is packed and sent to the branch office and the necessary updates in the hq table entities is performed. If not found then the rejection notification is appended on the response. Again, the neccessary fields are updated to tell that this particular request has been processed and it is rejected.
 
 ##### Background services
 a. Sychronization properties definition
@@ -858,7 +867,7 @@ Here, we explain how we implemented the car request service. We should note that
 ![vImage](./img/frontend-gif.gif) 
 
 
-Application was prepared for multiplatform using. During tests, we use 3 deployment types:
+Application was prepared for multiplatform usages. During tests, we use 3 deployment types:
 * iOS application
 * Android application
 * Web application
@@ -868,12 +877,12 @@ Application was prepared for different screen sizes and proportions (landscape, 
 ![vImage](./img/frontend-multiplatform.png) 
 
 
-Application can be used as Headquater or Branch office, and can automaticly adapt to type of office (HQ/BO). Main color theme and operations are depends on office type.
+Application can be used as Headquater or Branch office, and can automaticaly adapt to type of office (HQ/BO). Main color theme and operations depend on office type.
 
 #### Differnt office types 
-At the beginning of application, user can select backend application, where he want do activities. API client is prepared at next screen (Page Login).
+At the beginning of application, user can select backend application, where he wants do activities. API client is prepared at the next screen (Page Login).
 
-Moreover, at login login screen we initialized the most important libraries.
+Moreover, at login login screen, we initialize the most important libraries.
 ```dart
 import 'package:apiconsument/data/servers.dart';
 import 'package:apiconsument/page_menu.dart';
@@ -910,7 +919,7 @@ Important libraries:
 
 #### Dynamic build
 
-Some views are used to build both application (for example PageListRequestsCars - but this page have a lot of differences between different office type. First - if this is HQ, list can show only pending request, and if it is HQ, user have extra button "Assign" on this page)
+Some views are used to build both application (for example PageListRequestsCars - but this page has a lot of differences between different office types. First - if this is HQ, list can show only pending request, and if it is HQ, user have extra button "Assign" on this page)
 
 ```dart
 import 'dart:convert';
@@ -1027,8 +1036,8 @@ class PageListRequestsCars extends StatelessWidget {
 
 #### API consumption
 
-API is consumed using Chopper library. This library can generate class for http API using simple abstract class. "To define a client, use the @ ChopperApi annotation on an abstract class that extends the ChopperService class." More information: https://github.com/lejard-h/chopper/blob/master/getting-started.md 
-As we see, service address is declarated at initialization, so we can use one API instance to prepare a lot of API services.
+API is consumed using Chopper library. This library can generate class for http API using simple abstract class. "To define a client, use the @ ChopperApi annotation on an abstract class that extends the ChopperService class." [More information:](https://github.com/lejard-h/chopper/blob/master/getting-started.md)
+As we see, service address is declared during initialization, so we can use one API instance to prepare a lot of API services.
 
 #### Chopper API class before generate
 
@@ -1107,7 +1116,7 @@ abstract class ApiService extends ChopperService {
   }
 }
 ```
-To generate file, in console user must type `flutter packages pub run build_runner watch` - this command observed abstract API class and generate new class with endpoints at every file saving.
+To generate file, in console user must type `flutter packages pub run build_runner watch` - this command observed abstract API class and generate new class with endpoints at every file saved.
 
 
 #### Chopper API class after generate
@@ -1334,7 +1343,13 @@ First project was prepared in Figma application - tool to UI design.
 #### Flutter, Dart, Debug
 Dart have a lot of tools (called DartDevTools) which can support develop process.
 
-![vImage](./img/frontend-debug.png) 
+![vImage](./img/frontend-debug.png)
+
+## RESOURCES
+1. [REST Template for Data Exchange](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html)
+2. [Task Schedular interfaces for Data Synchronization](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/scheduling.html)
+3. [Setting Up Swagger 2 with a Spring REST API](https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api)
+4. [How does Chopper work?](https://github.com/lejard-h/chopper/blob/master/getting-started.md)
 
 
 
@@ -1443,7 +1458,7 @@ TODO:
 # Report 4 - Performance analysis, summary and conclusions of the project
 a). Introduction
 
-In this part, we are trying to simulate a business logic (as one testsuite having seven steps as listed below) in an end to end manner where actors will be :-
+In this part, we are trying to simulate the business logic (as one testsuite having seven steps as listed below) in an end to end manner where actors will be :-
 1. Creating car requests, 
 2. Browsing the submitted requests,
 3. Browsing the unassigned requests,
@@ -1457,7 +1472,7 @@ The figure below shows the testsuite setup in soapUI
 
 * Performance testing tool
 
-    We use SoapUI 5.6.0 (open-source) to perform set and run the performance test for our REST API. The open-source version of SoapUI can handle a limited number of concurrent       threads (i.e [200](https://www.soapui.org/docs/load-testing/threads/)) at its basic configuration, therefore we altered these basic configurations inorder to support up to       2000 threads. However, increasing the number of threads triggers another key problem, the memory limitations which leads to not able to run a load test continuously over a 	long period of time. Yet, there is a workaround for allocating memory as described  [here](https://www.soapui.org/docs/load-testing/memory-management/) and [here](https://www.soapui.org/getting-started/working-with-soapui/improving-memory-usage/). Improving memory usage by changing the basic settings is limited on the hardware 	          capabability of the testing machine, for our case the testing computer had a 8GHz RAM and Core i5-4258U CPU @2.4GHz 2.4GHz. Due to those limitations, the simulation was 	   performed for approximately 60 minutes.
+    We use SoapUI `5.6.0` (open-source) to perform set and run the performance test for our REST API. The open-source version of SoapUI can handle a limited number of concurrent       threads (i.e [200](https://www.soapui.org/docs/load-testing/threads/)) at its basic configuration, therefore we altered these basic configurations inorder to support up to       2000 threads. However, increasing the number of threads triggers another key problem, the memory limitations which leads to not able to run a load test continuously over a 	long period of time. Yet, there is a workaround for improving memory usage as described  [here](https://www.soapui.org/docs/load-testing/memory-management/) and [here](https://www.soapui.org/getting-started/working-with-soapui/improving-memory-usage/). Improving memory usage by changing the basic settings is limited on the hardware 	          capabability of the testing machine, for our case the testing computer had a 8GHz RAM and Core i5-4258U CPU @2.4GHz 2.4GHz. Due to those limitations, the simulation was 	   performed for approximately 60 minutes.
     
 * Testing strategies
     * The Thread strategy - We linearly change the number of threads/virtual users from one level to another over the run of load test. We aim at establishing the threads 	       baseline above 	which the application will start flooding with errors. We then, determine the average data volume which our application can handle just before errors 	         occur, and finally establish the average response time.
