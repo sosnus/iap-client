@@ -855,6 +855,9 @@ Here, we explain how we implemented the car request service. We should note that
 
 ## Application - Frontend
 
+![vImage](./img/frontend-gif.gif) 
+
+
 Application was prepared for multiplatform using. During tests, we use 3 deployment types:
 * iOS application
 * Android application
