@@ -1503,10 +1503,10 @@ This marks the end of the project, but before the dead end each team member woul
 
 
 e) RESOURCES
-1. Concurrent threads limitation in SoapUI (https://www.soapui.org/docs/load-testing/threads/)
-2. Memory management in SoapUI part 1 (https://www.soapui.org/docs/load-testing/memory-management/)
-3. Memory management in SoapUI part 2 (https://www.soapui.org/getting-started/working-with-soapui/improving-memory-usage/)
-4. Simulating different types of load (https://www.soapui.org/docs/load-testing/simulating-different-types-of-load/)
+1. [Concurrent threads limitation in SoapUI](https://www.soapui.org/docs/load-testing/threads/)
+2. [Memory management in SoapUI part 1 ](https://www.soapui.org/docs/load-testing/memory-management/)
+3. [Memory management in SoapUI part 2 ](https://www.soapui.org/getting-started/working-with-soapui/improving-memory-usage/)
+4. [Simulating different types of load](https://www.soapui.org/docs/load-testing/simulating-different-types-of-load/)
 
 
 ```markdown
