@@ -1413,6 +1413,7 @@ This marks the end of the project, but before the dead end each team member woul
   6. Chopper is very interesting library and easy to use.
   7. First time we test web application during load test, and we know that Our server can working with about `800` users at the same time per Office instance. It is great score, because we acheve it on ASP server 3.5GB RAM 2vCPU where we had a lot of other applications hosted on same ASP!
   8. It was amazing challenge and interesting course, thank You one more time, ~**STANISŁAW PUŁAWSKI**
+* Spring boot is nice framework for API development and backend applications as it has made easier to fast create a web application. Using swagger-ui.html endpoint we can rapid test backend service inside browser - we do not need postman, curl or SoapUI for it. Taking part in this project was a great opportunity for me to expand not only technical abilities but also my multi-tasking skills, managerial as well as organizational skills. ~**WIKTOR MURASZKO**
 
 
 e) RESOURCES
