@@ -32,7 +32,7 @@ Documentation, scripts (and special frontend for 1st repo) [here](https://github
 * Backend
     * Java Spring `Spring Boot (v2.4.3)`
 * Frontend
-    * Flutter `Flutter 2.2.2`
+      * Flutter `Flutter 2.2.2`
         * Android [Flutter Android](https://img.shields.io/badge/Android-yes-green)
         * Web [Flutter Web](https://img.shields.io/badge/Web-yes-green)
         * Web container [Flutter Web container](https://img.shields.io/badge/Web%20container-not%20yet-red)
